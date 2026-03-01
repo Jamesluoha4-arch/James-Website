@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>James (Runzhe) Ma - Portfolio</title>
+    <style>
+        /* === BASE STYLES & VARIABLES === */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --accent-grey: #333333;
+            --line-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; line-height: 1.6; }
+        
+        /* === PARTICLE BACKGROUND === */
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+
+        /* === LAYOUT CONTAINERS === */
+        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; border-bottom: 1px solid var(--line-color); }
+        .section-title { font-size: 2rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); border-left: 4px solid #fff; padding-left: 15px;}
+
+        /* === HERO & SKILLS CIRCLE === */
+        .hero { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .hero p { color: var(--text-muted); max-width: 600px; margin-bottom: 50px; }
+        
+        .skills-container { position: relative; width: 400px; height: 400px; display: flex; align-items: center; justify-content: center; }
+        .photo-placeholder { width: 150px; height: 150px; border-radius: 50%; background-color: var(--accent-grey); border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; z-index: 10; overflow: hidden; }
+        .skill-item { position: absolute; font-size: 0.9rem; color: #ccc; transition: all 0.3s ease; }
+        
+        /* === IMPLEMENTATION PROJECTS === */
+        .impl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .impl-card { border: 1px solid var(--line-color); background: rgba(255,255,255,0.02); padding: 20px; cursor: pointer; transition: 0.3s; }
+        .impl-card:hover { border-color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-5px); }
+        .impl-img { width: 100%; height: 200px; background: var(--accent-grey); margin-top: 15px; display: flex; align-items: center; justify-content: center; color: #666; }
+
+        /* === 3D BOOK (UNIVERSITY PROJECTS) === */
+        .book-section { perspective: 1000px; display: flex; align-items: center; justify-content: center; height: 60vh; }
+        .book-container { position: relative; width: 200px; height: 280px; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        
+        .book-cover { position: absolute; width: 100%; height: 100%; background: #111; border: 2px solid #444; color: #fff; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 1.2rem; z-index: 5; box-shadow: 5px 5px 20px rgba(0,0,0,0.8); }
+        
+        .book-page { position: absolute; width: 100%; height: 100%; background: #222; border: 1px solid #555; display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px; font-size: 0.9rem; opacity: 0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+
+        /* Hover Effects for Book */
+        .book-container:hover { transform: scale(1.1); }
+        .book-container:hover .book-page { opacity: 1; z-index: 10; cursor: pointer; }
+        .book-container:hover .book-page:hover { border-color: #fff; background: #333; }
+        
+        /* Pop out positions */
+        .book-container:hover .page-1 { transform: translate(-180px, -40px) rotate(-15deg); }
+        .book-container:hover .page-2 { transform: translate(0px, -120px) rotate(5deg); }
+        .book-container:hover .page-3 { transform: translate(180px, -20px) rotate(12deg); }
+
+        /* === MODALS === */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; opacity: 0; transition: opacity 0.3s; padding: 20px; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-close { position: absolute; top: 20px; right: 30px; font-size: 2rem; cursor: pointer; color: #fff; }
+
+        /* Standard Modal */
+        .modal-standard { background: #111; border: 1px solid #444; width: 100%; max-width: 800px; padding: 40px; border-radius: 8px; }
+        
+        /* Magazine Modal */
+        .modal-magazine { display: flex; width: 100%; max-width: 1000px; height: 70vh; background: #111; border: 1px solid #444; border-radius: 8px; overflow: hidden; }
+        .mag-left { flex: 1; padding: 40px; border-right: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; }
+        .mag-right { flex: 2; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; overflow-y: auto; background: #0a0a0a; }
+        .mag-img { background: #222; width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; color: #555; border: 1px solid #333; }
+        
+        .figma-btn { display: inline-block; padding: 10px 20px; border: 1px solid #fff; color: #fff; text-decoration: none; margin-top: 20px; transition: 0.3s; }
+        .figma-btn:hover { background: #fff; color: #000; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .skills-container { width: 100%; height: auto; flex-wrap: wrap; gap: 10px; padding: 20px 0; }
+            .skill-item { position: relative; transform: none !important; left: auto !important; top: auto !important; background: #222; padding: 5px 10px; border-radius: 15px; border: 1px solid #444; }
+            .book-container:hover .page-1 { transform: translate(-100px, -80px) rotate(-10deg); }
+            .book-container:hover .page-3 { transform: translate(100px, -80px) rotate(10deg); }
+            .modal-magazine { flex-direction: column; height: 90vh; overflow-y: auto; }
+            .mag-left { border-right: none; border-bottom: 1px solid #333; flex: none; }
+            .mag-right { flex: none; grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <section class="hero">
+        <h1>Runzhe (James) Ma </h1>
+        <p>Master's student in Interaction Design and Electronic Arts .<br>Fusing digital prototypes, AI, and inclusive design[cite: 8, 12].</p>
+        
+        <div class="skills-container" id="skills-container">
+            <div class="photo-placeholder">[ Insert Photo Here ]</div>
+            </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Implementation Projects [cite: 56]</h2>
+        <div class="impl-grid">
+            <div class="impl-card" onclick="openModal('modal-impl-1')">
+                <h3>Coomo AI Sound Therapy </h3>
+                <p style="color: var(--text-muted); margin-top: 10px;">Personalized AI therapeutic audio [cite: 61]</p>
+                <div class="impl-img">[ Project Image Placeholder ]</div>
+            </div>
+            <div class="impl-card" onclick="openModal('modal-impl-2')">
+                <h3>Songdio AI Music </h3>
+                <p style="color: var(--text-muted); margin-top: 10px;">Multimodal music creation platform [cite: 67]</p>
+                <div class="impl-img">[ Project Image Placeholder ]</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">University Projects [cite: 38]</h2>
+        <div class="book-section">
+            <div class="book-container">
+                <div class="book-cover">James Portfolio</div>
+                <div class="book-page page-1" onclick="openModal('modal-uni-1')">PerioGuard<br></div>
+                <div class="book-page page-2" onclick="openModal('modal-uni-2')">SKYDREAER<br></div>
+                <div class="book-page page-3" onclick="openModal('modal-uni-3')">Sonair Assistant<br></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <span class="modal-close" onclick="closeModals()">&times;</span>
+        
+        <div class="modal-standard" id="modal-impl-1" style="display: none;">
+            <h2>Coomo AI Sound Therapy </h2>
+            <p><strong>Type:</strong> AI Mobile Application | <strong>Role:</strong> Led End-to-End Design [cite: 59]</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <p>Led the end-to-end design of an AI-driven music therapy application aimed at improving user focus, relaxation, and emotional wellbeing through personalized sound experiences[cite: 59]. Implemented voice customization and feedback functions[cite: 63].</p>
+            <a href="#" class="figma-btn">View on Figma -></a>
+        </div>
+
+        <div class="modal-standard" id="modal-impl-2" style="display: none;">
+            <h2>Songdio Iteration </h2>
+            <p><strong>Type:</strong> Web/Mobile Platform | <strong>Role:</strong> User Experience Designer [cite: 25, 27]</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <p>Led the iterative redesign of Songdio, an AI-powered multimodal music creation platform[cite: 67]. Redesigned the visual system by shifting from a stable, minimal style to a bold, dynamic interface[cite: 68].</p>
+            <a href="#" class="figma-btn">View on Figma -></a>
+        </div>
+
+        <div class="modal-magazine" id="modal-uni-1" style="display: none;">
+            <div class="mag-left">
+                <div>
+                    <h2>PerioGuard </h2>
+                    <br>
+                    <p><strong>Type:</strong> Hardware & App Integration [cite: 43]</p>
+                    <p><strong>Role:</strong> Led project planning & design refinement [cite: 41]</p>
+                    <br>
+                    <p style="color: #aaa;">Smart toothbrush for periodontal health. Created digital prototypes in Figma and physical models with Fusion 360[cite: 39, 42].</p>
+                </div>
+                <a href="#" class="figma-btn">View on Figma -></a>
+            </div>
+            <div class="mag-right">
+                <div class="mag-img">Magazine Img 1</div>
+                <div class="mag-img">Magazine Img 2</div>
+                <div class="mag-img">Magazine Img 3</div>
+            </div>
+        </div>
+
+        <div class="modal-magazine" id="modal-uni-2" style="display: none;">
+            <div class="mag-left">
+                <div>
+                    <h2>SKYDREAER </h2>
+                    <br>
+                    <p><strong>Type:</strong> VR Platform / Multi Platform [cite: 44, 46]</p>
+                    <p><strong>Role:</strong> Lead Designer [cite: 45]</p>
+                    <br>
+                    <p style="color: #aaa;">Program dedicated to addressing negative emotional impacts for passengers with children. Interface design based on Apple Vision Pro platform[cite: 45, 47].</p>
+                </div>
+                <a href="#" class="figma-btn">View on Figma -></a>
+            </div>
+            <div class="mag-right">
+                <div class="mag-img">VR Interface 1</div>
+                <div class="mag-img">VR Interface 2</div>
+            </div>
+        </div>
+
+        <div class="modal-magazine" id="modal-uni-3" style="display: none;">
+            <div class="mag-left">
+                <div>
+                    <h2>Sonair Assistant </h2>
+                    <br>
+                    <p><strong>Type:</strong> Mobile UI & Physical Detector [cite: 53]</p>
+                    <p><strong>Role:</strong> Team Leader [cite: 52]</p>
+                    <br>
+                    <p style="color: #aaa;">Committed to capturing tiny cough data and visualizing it to help users better understand changes in lung status[cite: 54].</p>
+                </div>
+                <a href="#" class="figma-btn">View on Figma -></a>
+            </div>
+            <div class="mag-right">
+                <div class="mag-img">UI App Design</div>
+                <div class="mag-img">Necklace Prototype</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === 1. CIRCULAR SKILLS POSITIONING ===
+        const skills = ["Python [cite: 80]", "JavaScript [cite: 80]", "Figma [cite: 82]", "Unity [cite: 85]", "Fusion360 [cite: 83]", "Blender [cite: 83]", "Adobe CS [cite: 82]"];
+        const container = document.getElementById('skills-container');
+        const radius = window.innerWidth > 768 ? 160 : 0; 
+
+        if(window.innerWidth > 768) {
+            skills.forEach((skill, index) => {
+                const el = document.createElement('div');
+                el.className = 'skill-item';
+                el.innerText = skill;
+                const angle = (index / skills.length) * (2 * Math.PI);
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                el.style.left = `calc(50% + ${x}px - 30px)`;
+                el.style.top = `calc(50% + ${y}px - 10px)`;
+                container.appendChild(el);
+            });
+        } else {
+            // Mobile fallback handles positioning via CSS
+            skills.forEach(skill => {
+                const el = document.createElement('div');
+                el.className = 'skill-item';
+                el.innerText = skill;
+                container.appendChild(el);
+            });
+        }
+
+        // === 2. MODAL LOGIC ===
+        const overlay = document.getElementById('modal-overlay');
+        const modals = overlay.querySelectorAll('div[id^="modal-"]');
+
+        function openModal(id) {
+            modals.forEach(m => m.style.display = 'none'); // Hide all
+            document.getElementById(id).style.display = id.includes('uni') ? 'flex' : 'block';
+            overlay.classList.add('active');
+        }
+
+        function closeModals() {
+            overlay.classList.remove('active');
+        }
+
+        // Close when clicking outside content
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeModals();
+        });
+
+        // === 3. PARTICLES BACKGROUND ===
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 1) - 0.5;
+                this.speedY = (Math.random() * 1) - 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if(this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const numberOfParticles = (canvas.width * canvas.height) / 15000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                // Draw lines
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255,255,255,${0.2 - distance/500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        initParticles();
+        animateParticles();
+    </script>
+</body>
+</html>
