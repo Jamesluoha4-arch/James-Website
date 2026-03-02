@@ -195,16 +195,47 @@
         .profile-sticky { position: sticky; top: 120px; height: fit-content; }
 
         .avatar {
-            width: 180px; height: 180px;
-            border-radius: 40px;
-            background: #222;
-            margin-bottom: 30px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
+    width: 220px;
+    height: 220px;
+    border-radius: 40px;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
 
-        .avatar img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .avatar:hover img { filter: grayscale(0); transform: scale(1.1); }
+/* 共有图片定位样式 */
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.4s ease; /* 控制切换的平滑度，0.4s 比较自然 */
+}
+
+/* 悬停照片默认隐藏 */
+.photo-hover {
+    opacity: 0;
+    z-index: 2;
+}
+
+/* 默认照片在底层 */
+.photo-default {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* 鼠标悬停时的逻辑 */
+.avatar:hover .photo-hover {
+    opacity: 1; /* 悬停时显示图二 */
+}
+
+.avatar:hover .photo-default {
+    opacity: 0.7; /* 可选：稍微降低图一透明度，让过渡更深邃 */
+}
 
         .tag {
             display: inline-block;
@@ -367,9 +398,10 @@
         <h2 class="section-title">ABOUT <span style="color: var(--primary);">ME</span></h2>
         <div class="about-grid">
             <aside class="profile-sticky">
-                <div class="avatar">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=James" alt="James">
-                </div>
+<div class="avatar">
+    <img src="JamesOrigin.image" class="photo-default" alt="James Origin"> 
+    <img src="JamesHover.image" class="photo-hover" alt="James Hover">
+</div>
                 <h3 style="font-size: 1.8rem; margin-bottom: 5px;">Runzhe Ma (James)</h3>
                 <p style="opacity: 0.6; margin-bottom: 25px; font-family: var(--font-mono);">Master of Interaction Design @ USYD</p>
                 <div class="skills-box">
@@ -393,7 +425,7 @@
     <strong style="color: #fff; font-weight: 700;">Interaction Design Master’s candidate at USYD</strong>, 
     specializing in intelligent, user-centered products. I bridge 
     <span style="color: var(--primary); font-weight: 700;">UI/UX, AI product management, and XR development</span> 
-    to turn complex tech into seamless experiences. Having led end-to-end lifecycles for AI music and health platforms, I thrive on emerging technologies to build solutions that align human needs with business goals. [cite: 7, 14, 25, 47, 67]
+    to turn complex tech into seamless experiences. Having led end-to-end lifecycles for AI music and health platforms, I thrive on emerging technologies to build solutions that align human needs with business goals. 
 </p>
                 <div class="timeline-item">
                     <h4 style="color: var(--primary); font-size: 1.2rem;">Hangzhou Xin Ying Tech | AI Product Intern</h4>
