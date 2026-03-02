@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUNZHE MA | PORTFOLIO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Runzhe Ma (James) | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #DA205A;
@@ -13,11 +13,9 @@
             --border: rgba(255, 255, 255, 0.1);
             --font-main: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            --cursor-x: 0px;
-            --cursor-y: 0px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg);
@@ -27,47 +25,67 @@
             line-height: 1.6;
         }
 
-        /* 极光背景呼吸感 */
+        /* 极光背景 */
         body::before {
             content: '';
             position: fixed;
-            top: -10%; left: -10%;
-            width: 120%; height: 120%;
-            background: radial-gradient(circle at 50% 50%, rgba(218, 32, 90, 0.05) 0%, transparent 70%);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(218, 32, 90, 0.03) 0%, transparent 80%);
             z-index: -1;
-            animation: pulse 8s infinite alternate;
         }
 
-        @keyframes pulse {
-            from { opacity: 0.5; transform: scale(1); }
-            to { opacity: 1; transform: scale(1.1); }
-        }
-
-        /* 自定义光标 */
         #cursor {
             position: fixed;
-            width: 20px; height: 20px;
+            width: 15px; height: 15px;
             background: var(--primary);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
             mix-blend-mode: screen;
-            transition: transform 0.1s ease-out;
-            filter: blur(4px) drop-shadow(0 0 10px var(--primary));
+            filter: blur(2px) drop-shadow(0 0 8px var(--primary));
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
         }
 
-        /* 玻璃拟态卡片标准 */
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.8), transparent);
+            backdrop-filter: blur(10px);
         }
 
-        /* Hero 区域 */
+        .nav-logo {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            opacity: 0.6;
+        }
+
+        .nav-links a:hover { opacity: 1; color: var(--primary); }
+
+        /* Hero Section */
         .hero {
             height: 100vh;
             display: flex;
@@ -75,29 +93,23 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 2rem;
+            text-align: center;
         }
 
         #canvas3d {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            mask-image: radial-gradient(circle, black 40%, transparent 80%);
+            inset: 0;
+            z-index: 0;
+            mask-image: radial-gradient(circle, black 30%, transparent 70%);
         }
 
-        .hero-content {
-            z-index: 2;
-            text-align: center;
-            pointer-events: none;
-        }
+        .hero-content { z-index: 1; pointer-events: none; }
 
         .hero-content h1 {
-            font-size: clamp(3rem, 10vw, 8rem);
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.2));
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to bottom, #fff, #666);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -106,152 +118,148 @@
             font-family: var(--font-mono);
             color: var(--primary);
             font-size: 1.2rem;
-            min-height: 1.5em;
+            margin-bottom: 2rem;
         }
 
-        /* About 区域布局 */
-        .section-container {
+        .btn-explore {
+            pointer-events: all;
+            padding: 15px 35px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: #fff;
+            font-family: var(--font-mono);
+            border-radius: 50px;
+            text-decoration: none;
+            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: inline-block;
+        }
+
+        .btn-explore:hover {
+            background: var(--primary);
+            box-shadow: 0 0 25px var(--primary);
+            transform: scale(1.05);
+        }
+
+        /* 通用布局 */
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 100px 20px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 60px;
+            font-weight: 900;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: 0.4s;
+        }
+
+        /* About & Timeline */
+        .about-grid {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1fr 1.5fr;
             gap: 60px;
         }
 
-        .profile-sticky {
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
+        .profile-sticky { position: sticky; top: 120px; height: fit-content; }
 
-        .avatar-container {
-            width: 180px; height: 180px;
-            border-radius: 20px;
+        .avatar {
+            width: 160px; height: 160px;
+            border-radius: 30px;
+            background: #222;
+            margin-bottom: 25px;
             overflow: hidden;
-            margin-bottom: 20px;
-            position: relative;
             border: 2px solid var(--border);
         }
 
-        .avatar-container img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            filter: grayscale(1);
-            transition: 0.5s;
-        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
+        .avatar:hover img { filter: grayscale(0); }
 
-        .avatar-container:hover img { filter: grayscale(0); transform: scale(1.05); }
-
-        .skills-tag {
+        .tag {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 5px 12px;
             background: rgba(218, 32, 90, 0.1);
             color: var(--primary);
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: var(--font-mono);
             font-size: 0.8rem;
-            margin: 4px;
-            border: 1px solid rgba(218, 32, 90, 0.2);
+            margin: 5px;
         }
 
-        /* 时间轴 */
         .timeline-item {
-            position: relative;
-            padding-left: 40px;
             margin-bottom: 40px;
+            position: relative;
+            padding-left: 30px;
+            border-left: 1px solid var(--border);
         }
 
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0;
-            width: 2px; height: 100%;
-            background: var(--border);
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -5px; top: 5px;
-            width: 12px; height: 12px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
-        }
-
-        /* 作品网格 */
+        /* Work Grid & Spotlight */
         .work-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
-            padding: 50px 0;
         }
 
         .project-card {
-            height: 400px;
             position: relative;
+            height: 380px;
             overflow: hidden;
-            perspective: 1000px;
-        }
-
-        .card-inner {
-            width: 100%; height: 100%;
-            padding: 30px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
-            transform-style: preserve-3d;
+            cursor: pointer;
         }
 
-        /* 聚光灯边框效果 */
-        .project-card::after {
-            content: '';
+        /* 聚光灯边框逻辑 */
+        .project-card::before {
+            content: "";
             position: absolute;
             inset: 0;
-            border-radius: inherit;
-            padding: 1px;
-            background: radial-gradient(circle at var(--mx) var(--my), rgba(218, 32, 90, 0.8), transparent 40%);
+            border-radius: 20px;
+            padding: 1.5px; 
+            background: radial-gradient(
+                circle 150px at var(--mouse-x) var(--mouse-y),
+                rgba(218, 32, 90, 0.6),
+                transparent
+            );
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             opacity: 0;
-            transition: 0.3s;
+            transition: opacity 0.4s;
         }
 
-        .project-card:hover::after { opacity: 1; }
+        .project-card:hover::before { opacity: 1; }
 
-        /* 模态框 */
-        #modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(5,5,5,0.98);
-            z-index: 10000;
-            display: none;
-            overflow-y: auto;
-            padding: 5vw;
+        .project-info { z-index: 1; }
+
+        /* Contact */
+        .contact-box {
+            text-align: center;
+            padding: 80px 0;
         }
 
-        .modal-content {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .close-btn {
-            position: fixed;
-            top: 30px; right: 30px;
+        footer {
+            text-align: center;
+            padding: 40px;
             font-family: var(--font-mono);
-            color: var(--primary);
-            background: none; border: none; font-size: 1.5rem;
+            opacity: 0.4;
+            font-size: 0.8rem;
         }
 
-        /* 响应式调整 */
         @media (max-width: 768px) {
-            .section-container { grid-template-columns: 1fr; }
-            .profile-sticky { position: relative; top: 0; }
-            #cursor { display: none; }
-            * { cursor: auto; }
+            .about-grid { grid-template-columns: 1fr; }
+            nav { padding: 20px; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
@@ -259,249 +267,178 @@
 
     <div id="cursor"></div>
 
+    <nav>
+        <div class="nav-logo">RUNZHE MA (JAMES) WEBSITE</div>
+        <div class="nav-links">
+            <a href="#about">ABOUT</a>
+            <a href="#work">WORK</a>
+            <a href="#contact">CONTACT</a>
+        </div>
+    </nav>
+
     <section class="hero">
         <canvas id="canvas3d"></canvas>
         <div class="hero-content">
-            <h1 id="hero-title">RUNZHE MA</h1>
+            <h1>RUNZHE MA</h1>
             <div class="typewriter" id="typewriter"></div>
+            <a href="#work" class="btn-explore">Explore Work →</a>
         </div>
     </section>
 
-    <div class="section-container" id="about">
-        <aside class="profile-sticky">
-            <div class="avatar-container">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300" alt="Avatar" id="avatarImg">
-                <input type="file" id="avatarUpload" hidden accept="image/*">
-            </div>
-            <h2 style="font-size: 2rem; margin-bottom: 10px;">马润哲</h2>
-            <p style="color: #888; margin-bottom: 20px;">跨端交互工程师 / 创意开发者</p>
-            <div class="skills">
-                <span class="skills-tag">Canvas 3D</span>
-                <span class="skills-tag">WebGPU</span>
-                <span class="skills-tag">React</span>
-                <span class="skills-tag">Rust</span>
-            </div>
-        </aside>
-
-        <main class="timeline">
-            <div class="timeline-item glass-card" style="padding: 25px;">
-                <div class="timeline-dot"></div>
-                <h3 style="color: var(--primary)">Senior Creative Developer @ TechVision</h3>
-                <small style="font-family: var(--font-mono); opacity: 0.6;">2022 - PRESENT</small>
-                <p style="margin-top: 15px;">负责高性能可视化引擎开发，将渲染延迟降低了 40%，主导了多个元宇宙展厅项目的落地。</p>
-            </div>
-            <div class="timeline-item glass-card" style="padding: 25px;">
-                <div class="timeline-dot"></div>
-                <h3 style="color: var(--primary)">Interaction Designer @ Nebula Studio</h3>
-                <small style="font-family: var(--font-mono); opacity: 0.6;">2019 - 2022</small>
-                <p style="margin-top: 15px;">探索 HMI 人机交互界面，设计并实现了多款自动驾驶座舱的视觉动效系统。</p>
-            </div>
-        </main>
+    <div class="container" id="about">
+        <h2 class="section-title">ABOUT</h2>
+        <div class="about-grid">
+            <aside class="profile-sticky">
+                <div class="avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=James" alt="James">
+                </div>
+                <h3>Runzhe Ma</h3>
+                <p style="opacity: 0.6; margin-bottom: 20px;">Master of Interaction Design @ USYD</p>
+                <div class="skills-box">
+                    <span class="tag">Figma</span> <span class="tag">JavaScript</span>
+                    <span class="tag">Python</span> <span class="tag">Unity</span>
+                    <span class="tag">Blender</span> <span class="tag">Fusion 360</span>
+                </div>
+            </aside>
+            
+            <main>
+                <div class="timeline-item">
+                    <h4 style="color: var(--primary)">Hangzhou Xin Ying Tech | AI Product Intern</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">DEC 2025 - PRESENT</p>
+                    <p style="margin-top: 10px;">[cite: 26, 27] Leading iterative design for "Songdio" (AI music platform) and end-to-end design for "Coomo" sound therapy app.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4 style="color: var(--primary)">University of Sydney | M. Interaction Design</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">2025 - 2026</p>
+                    <p style="margin-top: 10px;">[cite: 14] Specializing in VR/AR interfaces and user-centered intelligent products.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4 style="color: var(--primary)">CRCC Bridge Engineering | Project Assistant</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">OCT 2025 - DEC 2025</p>
+                    <p style="margin-top: 10px;">[cite: 33, 35] Managed data sorting and weekly business planning for the marketing department.</p>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <div class="section-container" style="display: block;">
-        <h2 style="font-size: 3rem; margin-bottom: 40px;">SELECTED WORKS</h2>
+    <div class="container" id="work">
+        <h2 class="section-title">SELECTED WORK</h2>
         <div class="work-grid">
-            <div class="project-card glass-card" onclick="openModal('CyberMatrix')">
-                <div class="card-inner">
-                    <h4 style="font-family: var(--font-mono); color: var(--primary);">01</h4>
-                    <h3>CYBER MATRIX</h3>
-                    <p style="opacity: 0.7; font-size: 0.9rem;">基于原生 WebGL 的分布式计算视觉化系统</p>
+            <div class="project-card glass-card" onclick="window.location.href='#'">
+                <div class="project-info">
+                    <span class="tag">AI & MUSIC</span>
+                    <h3 style="margin-top: 15px;">Songdio Platform</h3>
+                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 66, 68] Redesigning a dynamic, bold interface for multimodal music creation.</p>
                 </div>
             </div>
-            <div class="project-card glass-card" onclick="openModal('NeuralFlow')">
-                <div class="card-inner">
-                    <h4 style="font-family: var(--font-mono); color: var(--primary);">02</h4>
-                    <h3>NEURAL FLOW</h3>
-                    <p style="opacity: 0.7; font-size: 0.9rem;">实时神经形态拓扑网络模拟</p>
+            <div class="project-card glass-card" onclick="window.location.href='#'">
+                <div class="project-info">
+                    <span class="tag">MIXED REALITY</span>
+                    <h3 style="margin-top: 15px;">SKY DREAMER</h3>
+                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 44, 46] Apple Vision Pro platform interface using transparent glass UI components.</p>
+                </div>
+            </div>
+            <div class="project-card glass-card" onclick="window.location.href='#'">
+                <div class="project-info">
+                    <span class="tag">IOT & HEALTH</span>
+                    <h3 style="margin-top: 15px;">PerioGuard</h3>
+                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 39, 43] Smart toothbrush system combining Figma prototypes and Fusion 360 models.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modal">
-        <button class="close-btn" onclick="closeModal()">[ CLOSE ]</button>
-        <div class="modal-content">
-            <h1 id="modal-title" style="font-size: 4rem; color: var(--primary); margin-bottom: 2rem;"></h1>
-            <div class="glass-card" style="padding: 40px;">
-                <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1200" alt="Work" style="width: 100%; border-radius: 10px; margin-bottom: 30px;">
-                <p style="font-size: 1.2rem; margin-bottom: 20px;">这是一个深度技术解析，探讨了如何在不使用第三方库的情况下处理 100,000 个动态粒子的实时渲染。</p>
-                <h3 style="margin: 20px 0;">技术挑战</h3>
-                <p style="color: #ccc;">主要的难点在于计算着色器模拟与 CPU 回传延迟的权衡...</p>
-            </div>
+    <div class="container" id="contact">
+        <div class="contact-box glass-card">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Collaborate</h2>
+            <p style="font-family: var(--font-mono); color: var(--primary);">83 Harbour Street, Sydney, NSW 2000 [cite: 3]</p>
+            <p style="margin: 20px 0;">Phone: 0432130500 [cite: 4]</p>
+            <a href="mailto:your@email.com" class="btn-explore">Send Message</a>
         </div>
     </div>
+
+    <footer>
+        DESIGNED & BUILT BY RUNZHE MA © 2026
+    </footer>
 
     <script>
-        /** 1. 3D 粒子甜甜圈 - Canvas 逻辑 **/
+        /** 1. 原生 3D 粒子甜甜圈 **/
         const canvas = document.getElementById('canvas3d');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
-        let mouse = { x: -1000, y: -1000, active: false };
+        let mouse = { x: -1000, y: -1000 };
 
         class Particle {
-            constructor(theta, phi) {
-                this.theta = theta;
-                this.phi = phi;
-                this.r = 150; // 环半径
-                this.R = 300; // 甜甜圈主半径
-                this.originX = 0;
-                this.originY = 0;
-                this.x = 0; this.y = 0; this.z = 0;
-                this.vx = 0; this.vy = 0;
+            constructor(t, p) {
+                this.t = t; this.p = p;
+                this.r = 130; this.R = 280;
             }
+            draw(rot) {
+                let x = (this.R + this.r * Math.cos(this.t)) * Math.cos(this.p);
+                let y = (this.R + this.r * Math.cos(this.t)) * Math.sin(this.p);
+                let z = this.r * Math.sin(this.t);
 
-            update(rotation) {
-                // 3D 坐标转换
-                let x3d = (this.R + this.r * Math.cos(this.theta)) * Math.cos(this.phi);
-                let y3d = (this.R + this.r * Math.cos(this.theta)) * Math.sin(this.phi);
-                let z3d = this.r * Math.sin(this.theta);
-
-                // 旋转矩阵变换 (绕 Y 轴和 X 轴)
-                let cosRy = Math.cos(rotation);
-                let sinRy = Math.sin(rotation);
-                let tz = z3d * cosRy - x3d * sinRy;
-                let tx = z3d * sinRy + x3d * cosRy;
+                // 旋转
+                let x1 = x * Math.cos(rot) - z * Math.sin(rot);
+                let z1 = x * Math.sin(rot) + z * Math.cos(rot);
                 
-                // 投影到 2D
-                const perspective = 800 / (800 + tz);
-                this.x = tx * perspective + width / 2;
-                this.y = y3d * perspective + height / 2;
-                this.z = tz;
+                const pers = 600 / (600 + z1);
+                const screenX = x1 * pers + width / 2;
+                const screenY = y * pers + height / 2;
 
-                // 鼠标交互
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 100) {
-                    const angle = Math.atan2(dy, dx);
-                    const force = (100 - dist) * 0.2;
-                    this.vx -= Math.cos(angle) * force;
-                    this.vy -= Math.sin(angle) * force;
-                }
-
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vx *= 0.9; // 阻尼
-                this.vy *= 0.9;
-            }
-
-            draw() {
-                const size = (this.z + 200) / 100;
-                const opacity = (this.z + 300) / 600;
-                ctx.fillStyle = `rgba(218, 32, 90, ${opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, Math.max(0.5, size), 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillStyle = `rgba(218, 32, 90, ${(z1 + 200) / 400})`;
+                ctx.fillRect(screenX, screenY, 1.5, 1.5);
             }
         }
 
-        function initCanvas() {
+        function init() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             particles = [];
-            for(let t=0; t<Math.PI*2; t+=0.15) {
-                for(let p=0; p<Math.PI*2; p+=0.1) {
+            for(let t=0; t<Math.PI*2; t+=0.2) {
+                for(let p=0; p<Math.PI*2; p+=0.15) {
                     particles.push(new Particle(t, p));
                 }
             }
         }
 
-        let rotation = 0;
-        function animate() {
+        let r = 0;
+        function render() {
             ctx.clearRect(0, 0, width, height);
-            rotation += 0.005;
-            const scrollOpacity = 1 - Math.min(window.scrollY / 500, 1);
-            canvas.style.opacity = scrollOpacity;
-
-            particles.forEach(p => {
-                p.update(rotation);
-                p.draw();
-            });
-            requestAnimationFrame(animate);
+            r += 0.005;
+            particles.forEach(p => p.draw(r));
+            requestAnimationFrame(render);
         }
 
         /** 2. 交互逻辑 **/
-        // 打字机效果
-        const words = ["CREATIVE DEVELOPER", "UI/UX DESIGNER", "PROBLEM SOLVER"];
-        let wordIdx = 0, charIdx = 0, isDeleting = false;
-        function type() {
-            const currentWord = words[wordIdx];
-            const display = isDeleting ? currentWord.substring(0, charIdx--) : currentWord.substring(0, charIdx++);
-            document.getElementById('typewriter').textContent = display + "_";
-
-            if(!isDeleting && charIdx > currentWord.length) {
-                setTimeout(() => isDeleting = true, 1500);
-            } else if(isDeleting && charIdx < 0) {
-                isDeleting = false;
-                wordIdx = (wordIdx + 1) % words.length;
-            }
-            setTimeout(type, isDeleting ? 50 : 100);
-        }
-
-        // 鼠标跟踪与 3D 卡片倾斜
+        const cursor = document.getElementById('cursor');
         window.addEventListener('mousemove', (e) => {
-            const cursor = document.getElementById('cursor');
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-
-            // 更新所有卡片的鼠标相对位置用于 CSS Mask
+            
+            // 为所有作品卡片更新聚光灯位置
             document.querySelectorAll('.project-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mx', `${x}px`);
-                card.style.setProperty('--my', `${y}px`);
-                
-                // 倾斜效果
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
-                card.querySelector('.card-inner').style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
             });
         });
 
-        // 磁性按钮逻辑
-        document.querySelectorAll('.skills-tag').forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width/2) * 0.4;
-                const y = (e.clientY - rect.top - rect.height/2) * 0.4;
-                btn.style.transform = `translate(${x}px, ${y}px)`;
-            });
-            btn.addEventListener('mouseleave', () => btn.style.transform = `translate(0,0)`);
-        });
-
-        // 模态框控制
-        function openModal(title) {
-            const modal = document.getElementById('modal');
-            document.getElementById('modal-title').innerText = title;
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+        // 打字机 [cite: 7, 10, 25]
+        const roles = ["INTERACTION DESIGNER", "AI PRODUCT MANAGER", "CREATIVE DEVELOPER"];
+        let rIdx = 0, charIdx = 0, del = false;
+        function type() {
+            const current = roles[rIdx];
+            document.getElementById('typewriter').innerText = del ? 
+                current.substring(0, charIdx--) : current.substring(0, charIdx++);
+            
+            if(!del && charIdx > current.length) { setTimeout(()=>del=true, 2000); }
+            else if(del && charIdx < 0) { del=false; rIdx = (rIdx+1)%roles.length; }
+            setTimeout(type, del ? 50 : 100);
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 头像上传预览
-        const avatarImg = document.getElementById('avatarImg');
-        const avatarUpload = document.getElementById('avatarUpload');
-        avatarImg.onclick = () => avatarUpload.click();
-        avatarUpload.onchange = (e) => {
-            const file = e.target.files[0];
-            if(file) avatarImg.src = URL.createObjectURL(file);
-        }
-
-        // 初始化
-        window.addEventListener('resize', initCanvas);
-        initCanvas();
-        animate();
-        type();
+        window.addEventListener('resize', init);
+        init(); render(); type();
     </script>
 </body>
 </html>
