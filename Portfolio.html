@@ -300,6 +300,67 @@
 
         .project-card:hover::before { opacity: 1; }
 
+
+        #work {
+    position: relative;
+    overflow: hidden;
+}
+
+/* 模拟左上角打下来的粉色柔光 */
+#work::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(218, 32, 90, 0.15) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 增强 Feature 卡片的投影效果 */
+#work .project-card {
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.5); /* 右下方阴影 */
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+}
+
+#work .project-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 30px 30px 80px rgba(218, 32, 90, 0.2); /* 悬停时阴影带一点粉色气晕 */
+}
+
+/* 2. University Projects 样式 */
+.uni-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三列布局 */
+    gap: 20px;
+}
+
+.uni-card {
+    height: 300px; /* 比 Featured 稍微矮一点，体现层级 */
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transition: 0.3s;
+}
+
+.uni-card:hover {
+    border-color: var(--primary);
+    background: rgba(218, 32, 90, 0.02);
+}
+
+@media (max-width: 768px) {
+    .uni-grid { grid-template-columns: 1fr; }
+}
+
         /* Modal 优化 */
         #project-modal {
             position: fixed;
@@ -449,32 +510,49 @@
     </div>
 
     <div class="container" id="work">
-        <h2 class="section-title">FEATURED WORK</h2>
-        <div class="work-grid">
-            <div class="project-card glass-card" onclick="openModal('songdio')">
-                <div class="project-info">
-                    <span class="tag" style="background: var(--primary); border:none;">AI & MUSIC</span>
-                    <h3 style="margin-top: 15px; font-size: 1.5rem;">Songdio Platform</h3>
-                    <p style="opacity: 0.5; font-size: 0.85rem;">Redesigning a dynamic, bold interface for multimodal music creation.</p>
-                </div>
+    <h2 class="section-title">FEATURED <span style="color: var(--primary);">WORK</span></h2>
+    <div class="work-grid" style="grid-template-columns: repeat(2, 1fr);"> 
+        <div class="project-card glass-card" onclick="openModal('songdio')">
+            <div class="project-info">
+                <span class="tag" style="background: var(--primary); border:none;">AI & MUSIC</span>
+                <h3 style="margin-top: 15px; font-size: 1.8rem;">Songdio Platform</h3>
+                <p style="opacity: 0.6; font-size: 0.9rem;">Redesigning a dynamic, bold interface for multimodal music creation.</p>
             </div>
-            <div class="project-card glass-card" onclick="openModal('skydreamer')">
-                <div class="project-info">
-                    <span class="tag" style="background: var(--primary); border:none;">MIXED REALITY</span>
-                    <h3 style="margin-top: 15px; font-size: 1.5rem;">SKY DREAMER</h3>
-                    <p style="opacity: 0.5; font-size: 0.85rem;">Apple Vision Pro platform interface using transparent glass UI components.</p>
-                </div>
-            </div>
-            <div class="project-card glass-card" onclick="openModal('perioguard')">
-                <div class="project-info">
-                    <span class="tag" style="background: var(--primary); border:none;">IOT & HEALTH</span>
-                    <h3 style="margin-top: 15px; font-size: 1.5rem;">PerioGuard</h3>
-                    <p style="opacity: 0.5; font-size: 0.85rem;">Smart toothbrush system combining Figma prototypes and Fusion 360 models.</p>
-                </div>
+        </div>
+        <div class="project-card glass-card" onclick="openModal('skydreamer')">
+            <div class="project-info">
+                <span class="tag" style="background: var(--primary); border:none;">MIXED REALITY</span>
+                <h3 style="margin-top: 15px; font-size: 1.8rem;">SKY DREAMER</h3>
+                <p style="opacity: 0.6; font-size: 0.9rem;">Apple Vision Pro platform interface using transparent glass UI.</p>
             </div>
         </div>
     </div>
+</div>
 
+<div class="container" id="university" style="padding-top: 0;">
+    <h3 style="font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 4px; opacity: 0.5; margin-bottom: 30px; text-transform: uppercase;">University Projects</h3>
+    <div class="uni-grid">
+        <div class="uni-card" onclick="openModal('perioguard')" style="cursor: pointer;">
+            <span class="tag" style="width: fit-content;">Health Tech</span>
+            <h4 style="margin-top: 10px; font-size: 1.2rem;">PerioGuard</h4>
+            <p style="opacity: 0.5; font-size: 0.8rem; margin-top: 5px;">Smart toothbrush system & IoT Monitoring.</p>
+        </div>
+        
+        <div class="uni-card" onclick="alert('Details coming soon')" style="cursor: pointer;">
+            <span class="tag" style="width: fit-content;">Branding</span>
+            <h4 style="margin-top: 10px; font-size: 1.2rem;">Women's Equality Branding</h4>
+            <p style="opacity: 0.5; font-size: 0.8rem; margin-top: 5px;">Award-winning logo & visual storytelling.</p>
+        </div>
+
+        <div class="uni-card" style="opacity: 0.6;">
+            <span class="tag" style="width: fit-content;">UX Research</span>
+            <h4 style="margin-top: 10px; font-size: 1.2rem;">Inclusive Design Study</h4>
+            <p style="opacity: 0.5; font-size: 0.8rem; margin-top: 5px;">Accessible digital interface solutions.</p>
+        </div>
+    </div>
+</div>
+
+    
     <div class="container" id="contact">
         <div class="contact-box glass-card" style="text-align: center; padding: 80px 20px;">
             <h2 style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px;">Let's Collaborate</h2>
