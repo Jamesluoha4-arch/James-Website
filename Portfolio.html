@@ -269,37 +269,62 @@
             gap: 30px;
         }
 
-        .project-card {
-            position: relative;
-            height: 450px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            cursor: pointer;
-        }
+.project-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+    padding: 2px; /* 边框的厚度 */
+    overflow: hidden;
+    cursor: pointer;
+    /* 初始投影：向右下偏移 */
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+    border: none; /* 移除旧边框 */
+}
 
-        .project-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            padding: 2px; 
-            background: radial-gradient(
-                circle 200px at var(--mouse-x) var(--mouse-y),
-                rgba(218, 32, 90, 0.8),
-                transparent
-            );
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
+       .project-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 2px; /* 边框宽度 */
+    /* 核心：径向渐变跟随变量 --mouse-x 和 --mouse-y 移动 */
+    background: radial-gradient(
+        300px circle at var(--mouse-x) var(--mouse-y),
+        rgba(218, 32, 90, 0.8),
+        transparent 40%
+    );
+    /* 蒙版逻辑：只保留边框区域 */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+    pointer-events: none;
+}
 
-        .project-card:hover::before { opacity: 1; }
+        .project-info {
+    position: relative;
+    z-index: 1;
+    padding: 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: rgba(10, 10, 10, 0.4); /* 给内部加一层淡淡的底色，压住背景 */
+    border-radius: 22px; /* 比外层小一点 */
+}
 
+        .project-card:hover {
+    transform: translateY(-10px) scale(1.01);
+    box-shadow: 30px 30px 70px rgba(0, 0, 0, 0.7), 0 0 20px rgba(218, 32, 90, 0.1);
+}
+
+.project-card:hover::before {
+    opacity: 1;
+}
 
         #work {
     position: relative;
@@ -341,20 +366,21 @@
 }
 
 .uni-card {
-    height: 300px; /* 比 Featured 稍微矮一点，体现层级 */
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.01);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border);
     border-radius: 20px;
+    padding: 30px;
+    height: 280px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .uni-card:hover {
     border-color: var(--primary);
-    background: rgba(218, 32, 90, 0.02);
+    transform: translateY(-5px);
+    background: rgba(218, 32, 90, 0.03);
 }
 
 @media (max-width: 768px) {
