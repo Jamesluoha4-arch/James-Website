@@ -35,6 +35,7 @@
             z-index: -1;
         }
 
+        /* Neon Cursor 拖尾效果 */
         #cursor {
             position: fixed;
             width: 15px; height: 15px;
@@ -44,8 +45,8 @@
             z-index: 9999;
             mix-blend-mode: screen;
             filter: blur(2px) drop-shadow(0 0 8px var(--primary));
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease;
+            /* 移除之前的 transition，改用 JS 实现平滑延迟 */
+            left: 0; top: 0;
         }
 
         /* 导航栏 */
@@ -101,6 +102,7 @@
             inset: 0;
             z-index: 0;
             mask-image: radial-gradient(circle, black 30%, transparent 70%);
+            transition: opacity 0.3s ease;
         }
 
         .hero-content { z-index: 1; pointer-events: none; }
@@ -130,14 +132,13 @@
             font-family: var(--font-mono);
             border-radius: 50px;
             text-decoration: none;
-            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: background 0.4s, transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             display: inline-block;
         }
 
         .btn-explore:hover {
             background: var(--primary);
             box-shadow: 0 0 25px var(--primary);
-            transform: scale(1.05);
         }
 
         /* 通用布局 */
@@ -192,6 +193,7 @@
             font-family: var(--font-mono);
             font-size: 0.8rem;
             margin: 5px;
+            transition: 0.2s ease-out; /* 为磁性效果准备 */
         }
 
         .timeline-item {
@@ -218,7 +220,6 @@
             cursor: pointer;
         }
 
-        /* 聚光灯边框逻辑 */
         .project-card::before {
             content: "";
             position: absolute;
@@ -242,6 +243,48 @@
 
         .project-info { z-index: 1; }
 
+        /* 详情页模态框 (Modal) */
+        #project-modal {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 10000;
+            display: none; /* 默认隐藏 */
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #project-modal.active {
+            display: block;
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: fixed;
+            top: 30px; right: 40px;
+            z-index: 10001;
+            background: none; border: none;
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin: 40px 0;
+            background: #111;
+        }
+
         /* Contact */
         .contact-box {
             text-align: center;
@@ -260,6 +303,7 @@
             .about-grid { grid-template-columns: 1fr; }
             nav { padding: 20px; }
             .nav-links { display: none; }
+            #cursor { display: none; }
         }
     </style>
 </head>
@@ -285,6 +329,22 @@
         </div>
     </section>
 
+    <div id="project-modal">
+        <button class="modal-close" onclick="closeModal()">[ CLOSE ]</button>
+        <div class="modal-body">
+            <h1 id="m-title" style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 10px;">Project Title</h1>
+            <p id="m-tag" style="color: var(--primary); font-family: var(--font-mono); margin-bottom: 40px;">TAGS / CATEGORY</p>
+            
+            <img id="m-img" class="modal-image" src="" alt="Detail" loading="lazy">
+            
+            <div class="glass-card">
+                <h3 style="margin-bottom: 20px;">项目解析 (Insights)</h3>
+                <div id="m-content" style="color: #ccc; font-size: 1.1rem;">
+                    </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container" id="about">
         <h2 class="section-title">ABOUT</h2>
         <div class="about-grid">
@@ -292,8 +352,8 @@
                 <div class="avatar">
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=James" alt="James">
                 </div>
-                <h3>Runzhe Ma</h3>
-                <p style="opacity: 0.6; margin-bottom: 20px;">Master of Interaction Design @ USYD</p>
+                <h3>Runzhe Ma [cite: 2]</h3>
+                <p style="opacity: 0.6; margin-bottom: 20px;">Master of Interaction Design @ USYD [cite: 14]</p>
                 <div class="skills-box">
                     <span class="tag">Figma</span> <span class="tag">JavaScript</span>
                     <span class="tag">Python</span> <span class="tag">Unity</span>
@@ -304,18 +364,18 @@
             <main>
                 <div class="timeline-item">
                     <h4 style="color: var(--primary)">Hangzhou Xin Ying Tech | AI Product Intern</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">DEC 2025 - PRESENT</p>
-                    <p style="margin-top: 10px;">[cite: 26, 27] Leading iterative design for "Songdio" (AI music platform) and end-to-end design for "Coomo" sound therapy app.</p>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">DEC 2025 - PRESENT [cite: 26]</p>
+                    <p style="margin-top: 10px;">[cite: 27, 30] Leading iterative design for "Songdio" (AI music platform) and end-to-end design for "Coomo" sound therapy app.</p>
                 </div>
                 <div class="timeline-item">
                     <h4 style="color: var(--primary)">University of Sydney | M. Interaction Design</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">2025 - 2026</p>
-                    <p style="margin-top: 10px;">[cite: 14] Specializing in VR/AR interfaces and user-centered intelligent products.</p>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">2025 - 2026 [cite: 14, 16]</p>
+                    <p style="margin-top: 10px;">[cite: 7, 8] Specializing in VR/AR interfaces and user-centered intelligent products.</p>
                 </div>
                 <div class="timeline-item">
                     <h4 style="color: var(--primary)">CRCC Bridge Engineering | Project Assistant</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">OCT 2025 - DEC 2025</p>
-                    <p style="margin-top: 10px;">[cite: 33, 35] Managed data sorting and weekly business planning for the marketing department.</p>
+                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">OCT 2025 - DEC 2025 [cite: 33]</p>
+                    <p style="margin-top: 10px;">[cite: 35, 37] Managed data sorting and weekly business planning for the marketing department.</p>
                 </div>
             </main>
         </div>
@@ -324,21 +384,21 @@
     <div class="container" id="work">
         <h2 class="section-title">SELECTED WORK</h2>
         <div class="work-grid">
-            <div class="project-card glass-card" onclick="window.location.href='#'">
+            <div class="project-card glass-card" onclick="openModal('songdio')">
                 <div class="project-info">
                     <span class="tag">AI & MUSIC</span>
                     <h3 style="margin-top: 15px;">Songdio Platform</h3>
-                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 66, 68] Redesigning a dynamic, bold interface for multimodal music creation.</p>
+                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 67, 68] Redesigning a dynamic, bold interface for multimodal music creation.</p>
                 </div>
             </div>
-            <div class="project-card glass-card" onclick="window.location.href='#'">
+            <div class="project-card glass-card" onclick="openModal('skydreamer')">
                 <div class="project-info">
                     <span class="tag">MIXED REALITY</span>
                     <h3 style="margin-top: 15px;">SKY DREAMER</h3>
-                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 44, 46] Apple Vision Pro platform interface using transparent glass UI components.</p>
+                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 44, 47] Apple Vision Pro platform interface using transparent glass UI components.</p>
                 </div>
             </div>
-            <div class="project-card glass-card" onclick="window.location.href='#'">
+            <div class="project-card glass-card" onclick="openModal('perioguard')">
                 <div class="project-info">
                     <span class="tag">IOT & HEALTH</span>
                     <h3 style="margin-top: 15px;">PerioGuard</h3>
@@ -362,32 +422,58 @@
     </footer>
 
     <script>
-        /** 1. 原生 3D 粒子甜甜圈 **/
+        /** 1. 算法甜甜圈 (物理吸附版) **/
         const canvas = document.getElementById('canvas3d');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
-        let mouse = { x: -1000, y: -1000 };
+        let mousePos = { x: -1000, y: -1000 };
 
         class Particle {
             constructor(t, p) {
                 this.t = t; this.p = p;
                 this.r = 130; this.R = 280;
+                this.baseX = 0; this.baseY = 0;
+                this.currX = 0; this.currY = 0;
+                this.vx = 0; this.vy = 0;
             }
-            draw(rot) {
+            update(rot) {
+                // 计算 3D 基础位置
                 let x = (this.R + this.r * Math.cos(this.t)) * Math.cos(this.p);
                 let y = (this.R + this.r * Math.cos(this.t)) * Math.sin(this.p);
                 let z = this.r * Math.sin(this.t);
 
-                // 旋转
                 let x1 = x * Math.cos(rot) - z * Math.sin(rot);
                 let z1 = x * Math.sin(rot) + z * Math.cos(rot);
                 
                 const pers = 600 / (600 + z1);
-                const screenX = x1 * pers + width / 2;
-                const screenY = y * pers + height / 2;
+                this.baseX = x1 * pers + width / 2;
+                this.baseY = y * pers + height / 2;
+                this.zDepth = z1;
 
-                ctx.fillStyle = `rgba(218, 32, 90, ${(z1 + 200) / 400})`;
-                ctx.fillRect(screenX, screenY, 1.5, 1.5);
+                // 物理吸附/破坏逻辑
+                let dx = mousePos.x - this.currX;
+                let dy = mousePos.y - this.currY;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist < 120) {
+                    let force = (120 - dist) / 120;
+                    this.vx += dx * force * 0.05;
+                    this.vy += dy * force * 0.05;
+                }
+
+                // 弹性复原力 (Spring force)
+                this.vx += (this.baseX - this.currX) * 0.08;
+                this.vy += (this.baseY - this.currY) * 0.08;
+                
+                this.vx *= 0.85; // 摩擦阻尼
+                this.vy *= 0.85;
+                
+                this.currX += this.vx;
+                this.currY += this.vy;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(218, 32, 90, ${(this.zDepth + 200) / 400})`;
+                ctx.fillRect(this.currX, this.currY, 1.5, 1.5);
             }
         }
 
@@ -395,8 +481,8 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             particles = [];
-            for(let t=0; t<Math.PI*2; t+=0.2) {
-                for(let p=0; p<Math.PI*2; p+=0.15) {
+            for(let t=0; t<Math.PI*2; t+=0.22) {
+                for(let p=0; p<Math.PI*2; p+=0.18) {
                     particles.push(new Particle(t, p));
                 }
             }
@@ -406,17 +492,31 @@
         function render() {
             ctx.clearRect(0, 0, width, height);
             r += 0.005;
-            particles.forEach(p => p.draw(r));
+            
+            // 滚动时降低透明度
+            const scrollPercent = window.scrollY / 500;
+            canvas.style.opacity = Math.max(0, 1 - scrollPercent);
+
+            particles.forEach(p => {
+                p.update(r);
+                p.draw();
+            });
             requestAnimationFrame(render);
         }
 
-        /** 2. 交互逻辑 **/
+        /** 2. 全局交互逻辑 **/
+
+        // Neon Cursor 拖尾延迟
         const cursor = document.getElementById('cursor');
+        let curX = 0, curY = 0, targetX = 0, targetY = 0;
+        
         window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            
-            // 为所有作品卡片更新聚光灯位置
+            targetX = e.clientX;
+            targetY = e.clientY;
+            mousePos.x = e.clientX;
+            mousePos.y = e.clientY;
+
+            // 聚光灯边框更新
             document.querySelectorAll('.project-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
                 card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
@@ -424,21 +524,99 @@
             });
         });
 
-        // 打字机 [cite: 7, 10, 25]
+        function animateCursor() {
+            curX += (targetX - curX) * 0.15;
+            curY += (targetY - curY) * 0.15;
+            cursor.style.transform = `translate(${curX}px, ${curY}px)`;
+            requestAnimationFrame(animateCursor);
+        }
+
+        // Magnetic Buttons (磁性吸附)
+        const magneticElements = document.querySelectorAll('.btn-explore, .tag, .nav-links a');
+        magneticElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = `translate(0, 0)`;
+            });
+        });
+
+        // 打字机 [cite: 7, 25]
         const roles = ["INTERACTION DESIGNER", "AI PRODUCT MANAGER", "CREATIVE DEVELOPER"];
         let rIdx = 0, charIdx = 0, del = false;
         function type() {
             const current = roles[rIdx];
-            document.getElementById('typewriter').innerText = del ? 
-                current.substring(0, charIdx--) : current.substring(0, charIdx++);
-            
-            if(!del && charIdx > current.length) { setTimeout(()=>del=true, 2000); }
-            else if(del && charIdx < 0) { del=false; rIdx = (rIdx+1)%roles.length; }
+            const typeElem = document.getElementById('typewriter');
+            if(typeElem) {
+                typeElem.innerText = del ? current.substring(0, charIdx--) : current.substring(0, charIdx++);
+                if(!del && charIdx > current.length) { setTimeout(()=>del=true, 2000); }
+                else if(del && charIdx < 0) { del=false; rIdx = (rIdx+1)%roles.length; }
+            }
             setTimeout(type, del ? 50 : 100);
         }
 
+        /** 3. 详情页模态框内容逻辑 **/
+        const projects = {
+            songdio: {
+                title: "Songdio AI Platform [cite: 66]",
+                tag: "AI / GENERATIVE MUSIC / WEB",
+                img: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=1200",
+                content: `
+                    <strong>项目挑战:</strong> [cite: 67, 68] 将品牌视觉从稳健极简升级为大胆动态的艺术风格。<br><br>
+                    <strong>解决方案:</strong> [cite: 69, 70] 设计并实现了全端响应式界面，优化了从生成到剪辑的完整用户路径。<br><br>
+                    <strong>数据指标:</strong> [cite: 71] 显著增强了品牌辨识度，用户交互深度提升了约 30%。
+                `
+            },
+            skydreamer: {
+                title: "SKY DREAMER [cite: 44]",
+                tag: "VR / VISION PRO / INTERACTION",
+                img: "https://images.unsplash.com/photo-1626379953822-baec19c3bbcd?auto=format&fit=crop&w=1200",
+                content: `
+                    <strong>项目挑战:</strong> [cite: 45] 解决长途飞行中家长与儿童共处的负面情绪痛点。<br><br>
+                    <strong>解决方案:</strong> [cite: 46, 48] 基于 Apple Vision Pro 架构，利用玻璃拟态组件构建 VR 模拟预警系统。<br><br>
+                    <strong>核心功能:</strong> [cite: 49] 实现亲子双向服务平台的多设备协同交互。
+                `
+            },
+            perioguard: {
+                title: "PerioGuard [cite: 39]",
+                tag: "IOT / HARDWARE / UX",
+                img: "https://images.unsplash.com/photo-1559591937-e3b2af58b1f0?auto=format&fit=crop&w=1200",
+                content: `
+                    <strong>项目挑战:</strong> [cite: 40] 改善大学生群体的牙周健康管理习惯。<br><br>
+                    <strong>解决方案:</strong> [cite: 41, 42] 通过 Figma 构建 App 原型，并使用 Fusion 360 设计了对应的智能硬件外壳。<br><br>
+                    <strong>产出结果:</strong> [cite: 43] 交付了一套完整的软硬件结合健康监测方案。
+                `
+            }
+        };
+
+        function openModal(id) {
+            const p = projects[id];
+            document.getElementById('m-title').innerText = p.title;
+            document.getElementById('m-tag').innerText = p.tag;
+            document.getElementById('m-img').src = p.img;
+            document.getElementById('m-content').innerHTML = p.content;
+            
+            const modal = document.getElementById('project-modal');
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden'; // 禁用背景滚动
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 500);
+        }
+
         window.addEventListener('resize', init);
-        init(); render(); type();
+        init(); render(); type(); animateCursor();
     </script>
 </body>
 </html>
