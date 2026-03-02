@@ -23,6 +23,7 @@
             font-family: var(--font-main);
             overflow-x: hidden;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* 极光背景 */
@@ -35,7 +36,7 @@
             z-index: -1;
         }
 
-        /* Neon Cursor 拖尾效果 */
+        /* Neon Cursor */
         #cursor {
             position: fixed;
             width: 15px; height: 15px;
@@ -45,7 +46,6 @@
             z-index: 9999;
             mix-blend-mode: screen;
             filter: blur(2px) drop-shadow(0 0 8px var(--primary));
-            /* 移除之前的 transition，改用 JS 实现平滑延迟 */
             left: 0; top: 0;
         }
 
@@ -65,7 +65,7 @@
         .nav-logo {
             font-family: var(--font-mono);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             letter-spacing: -0.5px;
         }
 
@@ -78,7 +78,7 @@
             color: #fff;
             text-decoration: none;
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
             transition: 0.3s;
             opacity: 0.6;
@@ -95,23 +95,40 @@
             align-items: center;
             position: relative;
             text-align: center;
+            overflow: hidden;
         }
+
+        /* 填充侧边空白的装饰文字 */
+        .hero-side-text {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-weight: 900;
+            font-size: 15vh;
+            color: rgba(255,255,255,0.02);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            text-transform: uppercase;
+        }
+        .side-left { left: -5%; top: 20%; transform: rotate(-90deg); }
+        .side-right { right: -5%; bottom: 20%; transform: rotate(90deg); }
 
         #canvas3d {
             position: absolute;
             inset: 0;
             z-index: 0;
-            mask-image: radial-gradient(circle, black 30%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 80%);
             transition: opacity 0.3s ease;
         }
 
         .hero-content { z-index: 1; pointer-events: none; }
 
         .hero-content h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(3.5rem, 12vw, 8rem);
             font-weight: 900;
             margin-bottom: 0.5rem;
-            background: linear-gradient(to bottom, #fff, #666);
+            letter-spacing: -2px;
+            background: linear-gradient(to bottom, #fff 30%, #444 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -119,46 +136,51 @@
         .typewriter {
             font-family: var(--font-mono);
             color: var(--primary);
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
         }
 
         .btn-explore {
             pointer-events: all;
-            padding: 15px 35px;
+            padding: 16px 45px;
             background: transparent;
             border: 1px solid var(--primary);
             color: #fff;
             font-family: var(--font-mono);
+            font-weight: 700;
             border-radius: 50px;
             text-decoration: none;
-            transition: background 0.4s, transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             display: inline-block;
+            font-size: 0.9rem;
         }
 
         .btn-explore:hover {
             background: var(--primary);
-            box-shadow: 0 0 25px var(--primary);
+            box-shadow: 0 0 30px rgba(218, 32, 90, 0.4);
+            transform: scale(1.05);
         }
 
         /* 通用布局 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 100px 20px;
+            padding: 120px 24px;
         }
 
         .section-title {
-            font-size: 3rem;
+            font-size: clamp(2.5rem, 8vw, 4rem);
             margin-bottom: 60px;
             font-weight: 900;
+            letter-spacing: -1px;
         }
 
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 40px;
             transition: 0.4s;
         }
@@ -167,52 +189,58 @@
         .about-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
-            gap: 60px;
+            gap: 80px;
         }
 
         .profile-sticky { position: sticky; top: 120px; height: fit-content; }
 
         .avatar {
-            width: 160px; height: 160px;
-            border-radius: 30px;
+            width: 180px; height: 180px;
+            border-radius: 40px;
             background: #222;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             overflow: hidden;
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
         }
 
-        .avatar img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
-        .avatar:hover img { filter: grayscale(0); }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .avatar:hover img { filter: grayscale(0); transform: scale(1.1); }
 
         .tag {
             display: inline-block;
-            padding: 5px 12px;
-            background: rgba(218, 32, 90, 0.1);
-            color: var(--primary);
-            border-radius: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             font-family: var(--font-mono);
-            font-size: 0.8rem;
-            margin: 5px;
-            transition: 0.2s ease-out; /* 为磁性效果准备 */
+            font-size: 0.75rem;
+            margin: 4px;
+            transition: 0.3s;
         }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
 
         .timeline-item {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             position: relative;
-            padding-left: 30px;
+            padding-left: 35px;
             border-left: 1px solid var(--border);
         }
+        .timeline-item::after {
+            content: ''; position: absolute; left: -5px; top: 5px;
+            width: 9px; height: 9px; background: var(--primary); border-radius: 50%;
+        }
 
-        /* Work Grid & Spotlight */
+        /* Work Grid */
         .work-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 30px;
         }
 
         .project-card {
             position: relative;
-            height: 380px;
+            height: 450px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -224,11 +252,11 @@
             content: "";
             position: absolute;
             inset: 0;
-            border-radius: 20px;
-            padding: 1.5px; 
+            border-radius: 24px;
+            padding: 2px; 
             background: radial-gradient(
-                circle 150px at var(--mouse-x) var(--mouse-y),
-                rgba(218, 32, 90, 0.6),
+                circle 200px at var(--mouse-x) var(--mouse-y),
+                rgba(218, 32, 90, 0.8),
                 transparent
             );
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -241,69 +269,52 @@
 
         .project-card:hover::before { opacity: 1; }
 
-        .project-info { z-index: 1; }
-
-        /* 详情页模态框 (Modal) */
+        /* Modal 优化 */
         #project-modal {
             position: fixed;
             inset: 0;
-            background: var(--bg);
+            background: rgba(5,5,5,0.98);
             z-index: 10000;
-            display: none; /* 默认隐藏 */
+            display: none;
             overflow-y: auto;
-            transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         #project-modal.active {
             display: block;
-            transform: translateY(0);
+            opacity: 1;
         }
 
         .modal-close {
             position: fixed;
             top: 30px; right: 40px;
             z-index: 10001;
-            background: none; border: none;
-            color: var(--primary);
+            background: white; border: none;
+            color: black;
+            padding: 8px 16px;
+            border-radius: 50px;
             font-family: var(--font-mono);
-            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        .modal-body {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 100px 20px;
-        }
-
-        .modal-image {
-            width: 100%;
-            height: auto;
-            border-radius: 20px;
-            margin: 40px 0;
-            background: #111;
-        }
-
-        /* Contact */
-        .contact-box {
-            text-align: center;
-            padding: 80px 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            font-family: var(--font-mono);
-            opacity: 0.4;
-            font-size: 0.8rem;
+        /* 响应式断点 */
+        @media (max-width: 1024px) {
+            .about-grid { gap: 40px; }
+            .work-grid { grid-template-columns: 1fr; }
+            nav { padding: 20px 30px; }
         }
 
         @media (max-width: 768px) {
             .about-grid { grid-template-columns: 1fr; }
-            nav { padding: 20px; }
+            .profile-sticky { position: relative; top: 0; }
+            .section-title { margin-bottom: 40px; }
+            .hero-side-text { display: none; }
             .nav-links { display: none; }
             #cursor { display: none; }
+            .container { padding: 80px 20px; }
+            .project-card { height: 350px; }
         }
     </style>
 </head>
@@ -312,7 +323,7 @@
     <div id="cursor"></div>
 
     <nav>
-        <div class="nav-logo">RUNZHE MA (JAMES) WEBSITE</div>
+        <div class="nav-logo">RUNZHE MA</div>
         <div class="nav-links">
             <a href="#about">ABOUT</a>
             <a href="#work">WORK</a>
@@ -321,26 +332,25 @@
     </nav>
 
     <section class="hero">
+        <div class="hero-side-text side-left">Interaction</div>
+        <div class="hero-side-text side-right">Experience</div>
         <canvas id="canvas3d"></canvas>
         <div class="hero-content">
             <h1>RUNZHE MA</h1>
             <div class="typewriter" id="typewriter"></div>
-            <a href="#work" class="btn-explore">Explore Work →</a>
+            <a href="#about" class="btn-explore">Explore</a>
         </div>
     </section>
 
     <div id="project-modal">
-        <button class="modal-close" onclick="closeModal()">[ CLOSE ]</button>
-        <div class="modal-body">
+        <button class="modal-close" onclick="closeModal()">CLOSE</button>
+        <div class="modal-body container">
             <h1 id="m-title" style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 10px;">Project Title</h1>
-            <p id="m-tag" style="color: var(--primary); font-family: var(--font-mono); margin-bottom: 40px;">TAGS / CATEGORY</p>
-            
-            <img id="m-img" class="modal-image" src="" alt="Detail" loading="lazy">
-            
+            <p id="m-tag" style="color: var(--primary); font-family: var(--font-mono); margin-bottom: 40px; letter-spacing: 2px;">TAGS / CATEGORY</p>
+            <img id="m-img" style="width:100%; border-radius:24px; margin-bottom:40px;" src="" alt="Detail">
             <div class="glass-card">
-                <h3 style="margin-bottom: 20px;">项目解析 (Insights)</h3>
-                <div id="m-content" style="color: #ccc; font-size: 1.1rem;">
-                    </div>
+                <h3 style="margin-bottom: 20px; color: var(--primary);">Insights</h3>
+                <div id="m-content" style="color: #aaa; font-size: 1.1rem; line-height: 1.8;"></div>
             </div>
         </div>
     </div>
@@ -352,8 +362,8 @@
                 <div class="avatar">
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=James" alt="James">
                 </div>
-                <h3>Runzhe Ma [cite: 2]</h3>
-                <p style="opacity: 0.6; margin-bottom: 20px;">Master of Interaction Design @ USYD [cite: 14]</p>
+                <h3 style="font-size: 1.8rem; margin-bottom: 5px;">Runzhe Ma (James)</h3>
+                <p style="opacity: 0.6; margin-bottom: 25px; font-family: var(--font-mono);">Master of Interaction Design @ USYD</p>
                 <div class="skills-box">
                     <span class="tag">Figma</span> <span class="tag">JavaScript</span>
                     <span class="tag">Python</span> <span class="tag">Unity</span>
@@ -363,19 +373,19 @@
             
             <main>
                 <div class="timeline-item">
-                    <h4 style="color: var(--primary)">Hangzhou Xin Ying Tech | AI Product Intern</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">DEC 2025 - PRESENT [cite: 26]</p>
-                    <p style="margin-top: 10px;">[cite: 27, 30] Leading iterative design for "Songdio" (AI music platform) and end-to-end design for "Coomo" sound therapy app.</p>
+                    <h4 style="color: var(--primary); font-size: 1.2rem;">Hangzhou Xin Ying Tech | AI Product Intern</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.5;">DEC 2025 - PRESENT</p>
+                    <p style="margin-top: 15px; color: #ccc;">Leading iterative design for "Songdio" (AI music platform) and end-to-end design for "Coomo" sound therapy app.</p>
                 </div>
                 <div class="timeline-item">
-                    <h4 style="color: var(--primary)">University of Sydney | M. Interaction Design</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">2025 - 2026 [cite: 14, 16]</p>
-                    <p style="margin-top: 10px;">[cite: 7, 8] Specializing in VR/AR interfaces and user-centered intelligent products.</p>
+                    <h4 style="color: var(--primary); font-size: 1.2rem;">University of Sydney | M. Interaction Design</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.5;">2025 - 2026</p>
+                    <p style="margin-top: 15px; color: #ccc;">Specializing in VR/AR interfaces and user-centered intelligent products.</p>
                 </div>
                 <div class="timeline-item">
-                    <h4 style="color: var(--primary)">CRCC Bridge Engineering | Project Assistant</h4>
-                    <p style="font-family: var(--font-mono); font-size: 0.8rem;">OCT 2025 - DEC 2025 [cite: 33]</p>
-                    <p style="margin-top: 10px;">[cite: 35, 37] Managed data sorting and weekly business planning for the marketing department.</p>
+                    <h4 style="color: var(--primary); font-size: 1.2rem;">CRCC Bridge Engineering | Project Assistant</h4>
+                    <p style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.5;">OCT 2025 - DEC 2025</p>
+                    <p style="margin-top: 15px; color: #ccc;">Managed data sorting and weekly business planning for the marketing department.</p>
                 </div>
             </main>
         </div>
@@ -386,43 +396,43 @@
         <div class="work-grid">
             <div class="project-card glass-card" onclick="openModal('songdio')">
                 <div class="project-info">
-                    <span class="tag">AI & MUSIC</span>
-                    <h3 style="margin-top: 15px;">Songdio Platform</h3>
-                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 67, 68] Redesigning a dynamic, bold interface for multimodal music creation.</p>
+                    <span class="tag" style="background: var(--primary); border:none;">AI & MUSIC</span>
+                    <h3 style="margin-top: 15px; font-size: 1.5rem;">Songdio Platform</h3>
+                    <p style="opacity: 0.5; font-size: 0.85rem;">Redesigning a dynamic, bold interface for multimodal music creation.</p>
                 </div>
             </div>
             <div class="project-card glass-card" onclick="openModal('skydreamer')">
                 <div class="project-info">
-                    <span class="tag">MIXED REALITY</span>
-                    <h3 style="margin-top: 15px;">SKY DREAMER</h3>
-                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 44, 47] Apple Vision Pro platform interface using transparent glass UI components.</p>
+                    <span class="tag" style="background: var(--primary); border:none;">MIXED REALITY</span>
+                    <h3 style="margin-top: 15px; font-size: 1.5rem;">SKY DREAMER</h3>
+                    <p style="opacity: 0.5; font-size: 0.85rem;">Apple Vision Pro platform interface using transparent glass UI components.</p>
                 </div>
             </div>
             <div class="project-card glass-card" onclick="openModal('perioguard')">
                 <div class="project-info">
-                    <span class="tag">IOT & HEALTH</span>
-                    <h3 style="margin-top: 15px;">PerioGuard</h3>
-                    <p style="opacity: 0.6; font-size: 0.9rem;">[cite: 39, 43] Smart toothbrush system combining Figma prototypes and Fusion 360 models.</p>
+                    <span class="tag" style="background: var(--primary); border:none;">IOT & HEALTH</span>
+                    <h3 style="margin-top: 15px; font-size: 1.5rem;">PerioGuard</h3>
+                    <p style="opacity: 0.5; font-size: 0.85rem;">Smart toothbrush system combining Figma prototypes and Fusion 360 models.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container" id="contact">
-        <div class="contact-box glass-card">
-            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Collaborate</h2>
-            <p style="font-family: var(--font-mono); color: var(--primary);">83 Harbour Street, Sydney, NSW 2000 [cite: 3]</p>
-            <p style="margin: 20px 0;">Phone: 0432130500 [cite: 4]</p>
-            <a href="mailto:your@email.com" class="btn-explore">Send Message</a>
+        <div class="contact-box glass-card" style="text-align: center; padding: 80px 20px;">
+            <h2 style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px;">Let's Collaborate</h2>
+            <p style="font-family: var(--font-mono); color: var(--primary); margin-bottom: 10px;">83 Harbour Street, Sydney, NSW 2000</p>
+            <p style="margin-bottom: 30px; opacity: 0.7;">Phone: 0432130500</p>
+            <a href="mailto:james.ma@example.com" class="btn-explore">Send Message</a>
         </div>
     </div>
 
-    <footer>
+    <footer style="padding: 60px 20px; text-align: center; font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.3; letter-spacing: 2px;">
         DESIGNED & BUILT BY RUNZHE MA © 2026
     </footer>
 
     <script>
-        /** 1. 算法甜甜圈 (物理吸附版) **/
+        /** 1. 算法甜甜圈 (高密度物理版) **/
         const canvas = document.getElementById('canvas3d');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
@@ -431,13 +441,13 @@
         class Particle {
             constructor(t, p) {
                 this.t = t; this.p = p;
-                this.r = 130; this.R = 280;
+                this.r = 130; this.R = 260;
                 this.baseX = 0; this.baseY = 0;
-                this.currX = 0; this.currY = 0;
+                this.currX = Math.random() * window.innerWidth; 
+                this.currY = Math.random() * window.innerHeight;
                 this.vx = 0; this.vy = 0;
             }
             update(rot) {
-                // 计算 3D 基础位置
                 let x = (this.R + this.r * Math.cos(this.t)) * Math.cos(this.p);
                 let y = (this.R + this.r * Math.cos(this.t)) * Math.sin(this.p);
                 let z = this.r * Math.sin(this.t);
@@ -450,30 +460,28 @@
                 this.baseY = y * pers + height / 2;
                 this.zDepth = z1;
 
-                // 物理吸附/破坏逻辑
                 let dx = mousePos.x - this.currX;
                 let dy = mousePos.y - this.currY;
                 let dist = Math.sqrt(dx*dx + dy*dy);
                 
-                if (dist < 120) {
-                    let force = (120 - dist) / 120;
-                    this.vx += dx * force * 0.05;
-                    this.vy += dy * force * 0.05;
+                if (dist < 150) {
+                    let force = (150 - dist) / 150;
+                    this.vx += dx * force * 0.06;
+                    this.vy += dy * force * 0.06;
                 }
 
-                // 弹性复原力 (Spring force)
-                this.vx += (this.baseX - this.currX) * 0.08;
-                this.vy += (this.baseY - this.currY) * 0.08;
-                
-                this.vx *= 0.85; // 摩擦阻尼
-                this.vy *= 0.85;
+                this.vx += (this.baseX - this.currX) * 0.07;
+                this.vy += (this.baseY - this.currY) * 0.07;
+                this.vx *= 0.82; 
+                this.vy *= 0.82;
                 
                 this.currX += this.vx;
                 this.currY += this.vy;
             }
             draw() {
-                ctx.fillStyle = `rgba(218, 32, 90, ${(this.zDepth + 200) / 400})`;
-                ctx.fillRect(this.currX, this.currY, 1.5, 1.5);
+                const alpha = (this.zDepth + 250) / 500;
+                ctx.fillStyle = `rgba(218, 32, 90, ${alpha * 0.8})`;
+                ctx.fillRect(this.currX, this.currY, 1.2, 1.2);
             }
         }
 
@@ -481,8 +489,9 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             particles = [];
-            for(let t=0; t<Math.PI*2; t+=0.22) {
-                for(let p=0; p<Math.PI*2; p+=0.18) {
+            // 增加采样密度 (从 0.22/0.18 提升至 0.15/0.12)
+            for(let t=0; t<Math.PI*2; t+=0.15) {
+                for(let p=0; p<Math.PI*2; p+=0.12) {
                     particles.push(new Particle(t, p));
                 }
             }
@@ -491,10 +500,8 @@
         let r = 0;
         function render() {
             ctx.clearRect(0, 0, width, height);
-            r += 0.005;
-            
-            // 滚动时降低透明度
-            const scrollPercent = window.scrollY / 500;
+            r += 0.004;
+            const scrollPercent = window.scrollY / 600;
             canvas.style.opacity = Math.max(0, 1 - scrollPercent);
 
             particles.forEach(p => {
@@ -504,9 +511,7 @@
             requestAnimationFrame(render);
         }
 
-        /** 2. 全局交互逻辑 **/
-
-        // Neon Cursor 拖尾延迟
+        /** 2. 交互逻辑 **/
         const cursor = document.getElementById('cursor');
         let curX = 0, curY = 0, targetX = 0, targetY = 0;
         
@@ -516,7 +521,6 @@
             mousePos.x = e.clientX;
             mousePos.y = e.clientY;
 
-            // 聚光灯边框更新
             document.querySelectorAll('.project-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
                 card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
@@ -525,27 +529,12 @@
         });
 
         function animateCursor() {
-            curX += (targetX - curX) * 0.15;
-            curY += (targetY - curY) * 0.15;
+            curX += (targetX - curX) * 0.1;
+            curY += (targetY - curY) * 0.1;
             cursor.style.transform = `translate(${curX}px, ${curY}px)`;
             requestAnimationFrame(animateCursor);
         }
 
-        // Magnetic Buttons (磁性吸附)
-        const magneticElements = document.querySelectorAll('.btn-explore, .tag, .nav-links a');
-        magneticElements.forEach(el => {
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-            });
-            el.addEventListener('mouseleave', () => {
-                el.style.transform = `translate(0, 0)`;
-            });
-        });
-
-        // 打字机 [cite: 7, 25]
         const roles = ["INTERACTION DESIGNER", "AI PRODUCT MANAGER", "CREATIVE DEVELOPER"];
         let rIdx = 0, charIdx = 0, del = false;
         function type() {
@@ -553,43 +542,30 @@
             const typeElem = document.getElementById('typewriter');
             if(typeElem) {
                 typeElem.innerText = del ? current.substring(0, charIdx--) : current.substring(0, charIdx++);
-                if(!del && charIdx > current.length) { setTimeout(()=>del=true, 2000); }
+                if(!del && charIdx > current.length) { setTimeout(()=>del=true, 2500); }
                 else if(del && charIdx < 0) { del=false; rIdx = (rIdx+1)%roles.length; }
             }
-            setTimeout(type, del ? 50 : 100);
+            setTimeout(type, del ? 40 : 80);
         }
 
-        /** 3. 详情页模态框内容逻辑 **/
         const projects = {
             songdio: {
-                title: "Songdio AI Platform [cite: 66]",
+                title: "Songdio AI Platform",
                 tag: "AI / GENERATIVE MUSIC / WEB",
                 img: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=1200",
-                content: `
-                    <strong>项目挑战:</strong> [cite: 67, 68] 将品牌视觉从稳健极简升级为大胆动态的艺术风格。<br><br>
-                    <strong>解决方案:</strong> [cite: 69, 70] 设计并实现了全端响应式界面，优化了从生成到剪辑的完整用户路径。<br><br>
-                    <strong>数据指标:</strong> [cite: 71] 显著增强了品牌辨识度，用户交互深度提升了约 30%。
-                `
+                content: "Challenge: Redesigning the visual identity from a minimal style to a bold, dynamic system.<br>Solution: Implemented a responsive multimodal interface, streamlining the AI music creation flow.<br>Result: 30% increase in user engagement through expressive design."
             },
             skydreamer: {
-                title: "SKY DREAMER [cite: 44]",
+                title: "SKY DREAMER",
                 tag: "VR / VISION PRO / INTERACTION",
                 img: "https://images.unsplash.com/photo-1626379953822-baec19c3bbcd?auto=format&fit=crop&w=1200",
-                content: `
-                    <strong>项目挑战:</strong> [cite: 45] 解决长途飞行中家长与儿童共处的负面情绪痛点。<br><br>
-                    <strong>解决方案:</strong> [cite: 46, 48] 基于 Apple Vision Pro 架构，利用玻璃拟态组件构建 VR 模拟预警系统。<br><br>
-                    <strong>核心功能:</strong> [cite: 49] 实现亲子双向服务平台的多设备协同交互。
-                `
+                content: "Challenge: Reducing flight anxiety for families through immersive technology.<br>Solution: Built a Glassmorphic UI system for Apple Vision Pro.<br>Feature: Real-time dual-user interaction between parents and children in VR."
             },
             perioguard: {
-                title: "PerioGuard [cite: 39]",
+                title: "PerioGuard",
                 tag: "IOT / HARDWARE / UX",
                 img: "https://images.unsplash.com/photo-1559591937-e3b2af58b1f0?auto=format&fit=crop&w=1200",
-                content: `
-                    <strong>项目挑战:</strong> [cite: 40] 改善大学生群体的牙周健康管理习惯。<br><br>
-                    <strong>解决方案:</strong> [cite: 41, 42] 通过 Figma 构建 App 原型，并使用 Fusion 360 设计了对应的智能硬件外壳。<br><br>
-                    <strong>产出结果:</strong> [cite: 43] 交付了一套完整的软硬件结合健康监测方案。
-                `
+                content: "Challenge: Managing periodontal health habits for college students.<br>Solution: Integrated a Figma-based monitoring app with a Fusion 360 designed hardware shell.<br>Outcome: A holistic health monitoring ecosystem."
             }
         };
 
@@ -599,11 +575,10 @@
             document.getElementById('m-tag').innerText = p.tag;
             document.getElementById('m-img').src = p.img;
             document.getElementById('m-content').innerHTML = p.content;
-            
             const modal = document.getElementById('project-modal');
             modal.style.display = 'block';
             setTimeout(() => modal.classList.add('active'), 10);
-            document.body.style.overflow = 'hidden'; // 禁用背景滚动
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
@@ -612,7 +587,7 @@
             setTimeout(() => {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-            }, 500);
+            }, 400);
         }
 
         window.addEventListener('resize', init);
