@@ -381,13 +381,13 @@
 /* 2. 升级卡片为 3D 层叠 */
 .uni-card {
     position: absolute; /* 必须绝对定位才能重叠 */
-    width: 200px; /* 变窄 */
-    height: 500px; /* 变高 */
+    width: 280px; /* 变窄 */
+    height: 380px; /* 变高 */
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
     border: 1px solid var(--border);
     border-radius: 24px;
-    padding: 30px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center; /* 尝试垂直居中对齐内容，在长方形卡片中看起来更好 */
@@ -406,8 +406,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: auto;
     border-radius: 50%;
     border: 2px solid var(--border);
     box-shadow: 0 0 30px rgba(218, 32, 90, 0.2);
@@ -827,7 +827,7 @@ const uniGrid = document.querySelector('.uni-grid');
         uniCards.forEach((card, i) => {
             const theta = (i / totalCards) * 360;
             // 改进：調整轮盘半径为300px（卡片变窄了），卡片呈螺旋状分布
-            card.style.transform = `rotateY(${theta}deg) translateZ(300px)`; 
+            card.style.transform = `rotateY(${theta}deg) translateZ(380px)`; 
         });
     }
 
