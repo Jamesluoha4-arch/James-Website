@@ -358,43 +358,38 @@
     box-shadow: 30px 30px 80px rgba(218, 32, 90, 0.2); /* 悬停时阴影带一点粉色气晕 */
 }
 
-        #university {
-    perspective: 2000px; /* 增加视距 */
-    overflow: visible;
+#university {
+    perspective: 1500px;
+    overflow: hidden; /* 裁剪超出区域 */
+    padding: 100px 0; /* 增加上下间距，给 3D 旋转留空间 */
 }
 
 /* 2. University Projects 样式 */
 .uni-grid {
+    position: relative;
+    height: 450px; 
+    width: 100%;
+    transform-style: preserve-3d;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    height: 500px;
-    transform-style: preserve-3d;
-    cursor: grab;
-    transition: transform 0.1s ease-out;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .uni-grid:active { cursor: grabbing; }
 
 /* 2. 升级卡片为 3D 层叠 */
 .uni-card {
-    position: absolute; /* 必须绝对定位才能重叠 */
-    width: 300px;
-    height: 400px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    position: absolute;
+    width: 280px;
+    height: 380px;
+    /* 核心修改：移除默认 transform，交给 JS 控制 */
+    backface-visibility: hidden;
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    backdrop-filter: blur(20px);
     transition: box-shadow 0.3s, border 0.3s;
-    backface-visibility: hidden; /* 旋转到背面时隐藏，增加真实感 */
-    user-select: none;
 }
-
 .uni-card:hover {
     border-color: var(--primary);
     transform: translateY(-5px);
@@ -786,73 +781,94 @@ if (navLogo) {
         window.addEventListener('resize', init);
         init(); render(); type(); animateCursor();
 
-        /** 3. University Projects 3D 万花筒逻辑 **/
+/** 3. University Projects 3D 轮盘逻辑 **/
 const uniGrid = document.querySelector('.uni-grid');
 const uniCards = document.querySelectorAll('.uni-card');
-let isDragging = false;
-let startX, startY;
-let rotateX = 0, rotateY = 0, rotateZ = 0;
-let scatter = 0; // 散开程度
+const totalCards = uniCards.length;
+const radius = 400; // 轮盘半径，越大圆圈越大
+let currentRotation = 0;
+let isDraggingUni = false;
+let startXUni = 0;
+let lastRotation = 0;
 
-// 初始化卡片初始位置（形成环状或叠加）
-uniCards.forEach((card, i) => {
-    // 初始给每个卡片一个不同的角度偏移
-    const angle = (i / uniCards.length) * Math.PI * 2;
-    card.dataset.angle = angle;
-});
-
-function update3D() {
+// 初始化：将卡片均匀排布在圆周上
+function init3D() {
     uniCards.forEach((card, i) => {
-        const angle = parseFloat(card.dataset.angle);
-        // 计算散开位移：scatter 越大，translateZ 越大
-        const zDis = scatter * (i + 1) * 50; 
-        const xDis = Math.sin(angle) * scatter * 100;
-        
-        card.style.transform = `
-            rotateY(${rotateY + (i * 15)}deg) 
-            rotateX(${rotateX}deg) 
-            rotateZ(${rotateZ}deg)
-            translateZ(${zDis}px)
-            translateX(${xDis}px)
-        `;
+        const theta = (i / totalCards) * 360;
+        // 初始位置：旋转 theta 角度，然后向外平移 radius 距离
+        card.style.transform = `rotateY(${theta}deg) translateZ(${radius}px)`;
     });
-    uniGrid.style.transform = `rotateX(${rotateX * 0.2}deg) rotateY(${rotateY * 0.2}deg)`;
 }
 
-// 鼠标/触摸事件
-window.addEventListener('mousedown', (e) => {
-    if(e.target.closest('.uni-grid')) {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-    }
+function update3DCarousel() {
+    // 旋转整个容器，而不是单独旋转卡片，这样更丝滑且符合物理逻辑
+    uniGrid.style.transform = `rotateY(${currentRotation}deg)`;
+    
+    // 简单的光影效果：正对面的卡片亮，背面的暗
+    uniCards.forEach((card, i) => {
+        const theta = (i / totalCards) * 360 + currentRotation;
+        const normalizedTheta = ((theta % 360) + 360) % 360; // 保持在 0-360
+        
+        // 当 theta 接近 0 或 360 时，表示卡片正对用户
+        const opacity = Math.cos(normalizedTheta * Math.PI / 180);
+        card.style.opacity = Math.max(0.2, (opacity + 1) / 2);
+        
+        // 只有最前面的卡片可以被点击
+        card.style.pointerEvents = (normalizedTheta < 45 || normalizedTheta > 315) ? 'auto' : 'none';
+    });
+}
+
+// 仅在 uni-grid 区域内监听鼠标
+uniGrid.addEventListener('mousedown', (e) => {
+    isDraggingUni = true;
+    startXUni = e.clientX;
+    uniGrid.style.transition = 'none'; // 拖拽时取消动画，增加跟手感
 });
 
 window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    rotateY += dx * 0.5;
-    rotateX -= dy * 0.5;
-    
-    // 核心：向右滑动 dx 为正，scatter 增加（散开）；向左滑动 dx 为负，scatter 减少（聚拢）
-    scatter = Math.max(-2, Math.min(5, scatter + dx * 0.01)); 
-    
-    // 增加一点 Z 轴随机感
-    rotateZ += (dx + dy) * 0.1;
-
-    startX = e.clientX;
-    startY = e.clientY;
-    
-    requestAnimationFrame(update3D);
+    if (!isDraggingUni) return;
+    const dx = e.clientX - startXUni;
+    // 旋转系数 0.2，让拖拽感不那么“跳跃”
+    currentRotation = lastRotation + dx * 0.2;
+    requestAnimationFrame(update3DCarousel);
 });
 
-window.addEventListener('mouseup', () => isDragging = false);
+window.addEventListener('mouseup', () => {
+    if (!isDraggingUni) return;
+    isDraggingUni = false;
+    lastRotation = currentRotation;
+    uniGrid.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+    
+    // 可选：松手后自动对齐到最近的一张卡片
+    const snapAngle = 360 / totalCards;
+    currentRotation = Math.round(currentRotation / snapAngle) * snapAngle;
+    lastRotation = currentRotation;
+    update3DCarousel();
+});
 
-// 初始化位置
-update3D();
+// 兼容移动端触摸
+uniGrid.addEventListener('touchstart', (e) => {
+    isDraggingUni = true;
+    startXUni = e.touches[0].clientX;
+    uniGrid.style.transition = 'none';
+});
+
+window.addEventListener('touchmove', (e) => {
+    if (!isDraggingUni) return;
+    const dx = e.touches[0].clientX - startXUni;
+    currentRotation = lastRotation + dx * 0.2;
+    update3DCarousel();
+});
+
+window.addEventListener('touchend', () => {
+    isDraggingUni = false;
+    lastRotation = currentRotation;
+    uniGrid.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+});
+
+// 启动执行
+init3D();
+update3DCarousel();
     </script>
 </body>
 </html>
