@@ -361,39 +361,59 @@
 #university {
     perspective: 1500px;
     overflow: hidden; /* 裁剪超出区域 */
-    padding: 100px 0; /* 增加上下间距，给 3D 旋转留空间 */
+    padding: 150px 0; /* 增加上下内边距，适应更高的卡片 */
 }
 
 /* 2. University Projects 样式 */
 .uni-grid {
-    position: relative;
-    height: 450px; 
-    width: 100%;
-    transform-style: preserve-3d;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    height: 600px; /* 给旋转留出更多高度空间 */
+    transform-style: preserve-3d;
+    cursor: grab;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* 更丝滑的过渡 */
 }
 
 .uni-grid:active { cursor: grabbing; }
 
 /* 2. 升级卡片为 3D 层叠 */
 .uni-card {
-    position: absolute;
-    width: 280px;
-    height: 380px;
-    /* 核心修改：移除默认 transform，交给 JS 控制 */
-    backface-visibility: hidden;
-    background: rgba(255, 255, 255, 0.03);
+    position: absolute; /* 必须绝对定位才能重叠 */
+    width: 200px; /* 变窄 */
+    height: 500px; /* 变高 */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
     border: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    transition: box-shadow 0.3s, border 0.3s;
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 尝试垂直居中对齐内容，在长方形卡片中看起来更好 */
+    backface-visibility: hidden; /* 隐藏背面 */
+    user-select: none;
+    pointer-events: auto; /* 确保点击弹窗依然有效 */
 }
 .uni-card:hover {
     border-color: var(--primary);
     transform: translateY(-5px);
     background: rgba(218, 32, 90, 0.03);
+}
+
+.usyd-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    box-shadow: 0 0 30px rgba(218, 32, 90, 0.2);
+    z-index: 1; /* 确保位于卡片后面 */
+    opacity: 0.8;
+    pointer-events: none; /* 不影响拖拽交互 */
 }
 
 @media (max-width: 768px) {
@@ -573,6 +593,7 @@
 <div class="container" id="university" style="padding-top: 0;">
     <h3 style="font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 4px; opacity: 0.5; margin-bottom: 30px; text-transform: uppercase;">University Projects</h3>
     <div class="uni-grid">
+        <img src="Logo.image" alt="USYD Logo" class="usyd-logo">
         <div class="uni-card" onclick="openModal('perioguard')" style="cursor: pointer;">
             <span class="tag" style="width: fit-content;">Health Tech</span>
             <h4 style="margin-top: 10px; font-size: 1.2rem;">PerioGuard</h4>
@@ -793,94 +814,71 @@ if (navLogo) {
         window.addEventListener('resize', init);
         init(); render(); type(); animateCursor();
 
-/** 3. University Projects 3D 轮盘逻辑 **/
 const uniGrid = document.querySelector('.uni-grid');
-const uniCards = document.querySelectorAll('.uni-card');
-const totalCards = uniCards.length;
-const radius = 400; // 轮盘半径，越大圆圈越大
-let currentRotation = 0;
-let isDraggingUni = false;
-let startXUni = 0;
-let lastRotation = 0;
+    const uniCards = document.querySelectorAll('.uni-card');
+    const totalCards = uniCards.length;
+    let isDraggingUni = false;
+    let startXUni = 0;
+    let currentRotationY = 0;
+    let lastRotationY = 0;
 
-// 初始化：将卡片均匀排布在圆周上
-function init3D() {
-    uniCards.forEach((card, i) => {
-        const theta = (i / totalCards) * 360;
-        // 初始位置：旋转 theta 角度，然后向外平移 radius 距离
-        card.style.transform = `rotateY(${theta}deg) translateZ(${radius}px)`;
-    });
-}
+    // 初始化：将卡片均匀排布在圆周上
+    function init3D() {
+        uniCards.forEach((card, i) => {
+            const theta = (i / totalCards) * 360;
+            // 改进：調整轮盘半径为300px（卡片变窄了），卡片呈螺旋状分布
+            card.style.transform = `rotateY(${theta}deg) translateZ(300px)`; 
+        });
+    }
 
-function update3DCarousel() {
-    // 旋转整个容器，而不是单独旋转卡片，这样更丝滑且符合物理逻辑
-    uniGrid.style.transform = `rotateY(${currentRotation}deg)`;
-    
-    // 简单的光影效果：正对面的卡片亮，背面的暗
-    uniCards.forEach((card, i) => {
-        const theta = (i / totalCards) * 360 + currentRotation;
-        const normalizedTheta = ((theta % 360) + 360) % 360; // 保持在 0-360
+    function update3DCarousel() {
+        // 旋转整个容器，而不是单独旋转卡片，这样更丝滑
+        uniGrid.style.transform = `rotateY(${currentRotationY}deg)`;
         
-        // 当 theta 接近 0 或 360 时，表示卡片正对用户
-        const opacity = Math.cos(normalizedTheta * Math.PI / 180);
-        card.style.opacity = Math.max(0.2, (opacity + 1) / 2);
-        
-        // 只有最前面的卡片可以被点击
-        card.style.pointerEvents = (normalizedTheta < 45 || normalizedTheta > 315) ? 'auto' : 'none';
+        // 调整光影效果和层级，使其更亮，更清晰看到后面
+        uniCards.forEach((card, i) => {
+            const theta = (i / totalCards) * 360 + currentRotationY;
+            const normalizedTheta = ((theta % 360) + 360) % 360; // 保持在 0-360
+            
+            const opacity = Math.cos(normalizedTheta * Math.PI / 180);
+            card.style.opacity = Math.max(0.4, (opacity + 1.2) / 2.2); // 调整这里
+            
+            // 防止误触：只有最前面的卡片可以点击
+            card.style.pointerEvents = (normalizedTheta < 45 || normalizedTheta > 315) ? 'auto' : 'none';
+        });
+    }
+
+    // 鼠标/触摸事件 (仅在 uni-grid 区域内监听)
+    uniGrid.addEventListener('mousedown', (e) => {
+        isDraggingUni = true;
+        startXUni = e.clientX;
+        uniGrid.style.transition = 'none'; // 拖拽时取消动画
     });
-}
 
-// 仅在 uni-grid 区域内监听鼠标
-uniGrid.addEventListener('mousedown', (e) => {
-    isDraggingUni = true;
-    startXUni = e.clientX;
-    uniGrid.style.transition = 'none'; // 拖拽时取消动画，增加跟手感
-});
+    window.addEventListener('mousemove', (e) => {
+        if (!isDraggingUni) return;
+        const dx = e.clientX - startXUni;
+        // 改进：将旋转系数从 0.2 降至 0.1，减慢旋转速度，更合理不 jump
+        currentRotationY = lastRotationY + dx * 0.1; 
+        requestAnimationFrame(update3DCarousel);
+    });
 
-window.addEventListener('mousemove', (e) => {
-    if (!isDraggingUni) return;
-    const dx = e.clientX - startXUni;
-    // 旋转系数 0.2，让拖拽感不那么“跳跃”
-    currentRotation = lastRotation + dx * 0.2;
-    requestAnimationFrame(update3DCarousel);
-});
+    window.addEventListener('mouseup', () => {
+        if (!isDraggingUni) return;
+        isDraggingUni = false;
+        lastRotationY = currentRotationY;
+        uniGrid.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+        
+        // 改进：松手后自动对齐到最近的一张卡片
+        const snapAngle = 360 / totalCards;
+        currentRotationY = Math.round(currentRotationY / snapAngle) * snapAngle;
+        lastRotationY = currentRotationY;
+        update3DCarousel();
+    });
 
-window.addEventListener('mouseup', () => {
-    if (!isDraggingUni) return;
-    isDraggingUni = false;
-    lastRotation = currentRotation;
-    uniGrid.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
-    
-    // 可选：松手后自动对齐到最近的一张卡片
-    const snapAngle = 360 / totalCards;
-    currentRotation = Math.round(currentRotation / snapAngle) * snapAngle;
-    lastRotation = currentRotation;
+    // 启动执行
+    init3D();
     update3DCarousel();
-});
-
-// 兼容移动端触摸
-uniGrid.addEventListener('touchstart', (e) => {
-    isDraggingUni = true;
-    startXUni = e.touches[0].clientX;
-    uniGrid.style.transition = 'none';
-});
-
-window.addEventListener('touchmove', (e) => {
-    if (!isDraggingUni) return;
-    const dx = e.touches[0].clientX - startXUni;
-    currentRotation = lastRotation + dx * 0.2;
-    update3DCarousel();
-});
-
-window.addEventListener('touchend', () => {
-    isDraggingUni = false;
-    lastRotation = currentRotation;
-    uniGrid.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
-});
-
-// 启动执行
-init3D();
-update3DCarousel();
     </script>
 </body>
 </html>
