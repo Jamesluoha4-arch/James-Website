@@ -339,16 +339,24 @@
 #work::before {
     content: '';
     position: absolute;
-    top: -10%;
-    left: -10%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, rgba(218, 32, 90, 0.15) 0%, transparent 70%);
-    filter: blur(80px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 900px;
+    height: 900px;
+
+    background: radial-gradient(
+        circle,
+        rgba(218, 32, 90, 0.18) 0%,
+        rgba(218, 32, 90, 0.08) 35%,
+        transparent 70%
+    );
+
+    filter: blur(120px);
     z-index: 0;
     pointer-events: none;
 }
-
 /* 增强 Feature 卡片的投影效果 */
 #work .project-card {
     z-index: 1;
