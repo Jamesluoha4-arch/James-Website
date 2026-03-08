@@ -288,29 +288,27 @@
     flex-direction: column;
 }
 
-       .project-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+       .project-card {
+    position: relative;
     border-radius: 24px;
-    padding: 2px; /* 边框宽度 */
-    /* 核心：径向渐变跟随变量 --mouse-x 和 --mouse-y 移动 */
-    background: radial-gradient(
-        300px circle at var(--mouse-x) var(--mouse-y),
-        rgba(218, 32, 90, 0.8),
-        transparent 40%
-    );
-    /* 蒙版逻辑：只保留边框区域 */
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 2;
-    pointer-events: none;
+    padding: 2px;
+    overflow: hidden;
+    cursor: pointer;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
 }
 
+.project-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;      /* 或 contain */
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 24px;
+    z-index: 0;
+}
         .project-info {
     position: relative;
     z-index: 1;
@@ -604,20 +602,21 @@
     <h2 class="section-title">FEATURED <span style="color: var(--primary);">WORK</span></h2>
     <h3 style="font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 4px; opacity: 0.5; margin-bottom: 30px; text-transform: uppercase;">Implementation Projects</h3>
 <div class="work-grid"> 
-    <div class="project-card" onclick="openModal('songdio')" style="background-image: url('SongdioCover.png');">
-        <div class="project-info">
-            <span class="tag" style="background: var(--primary); border:none; width: fit-content;">AI & MUSIC</span>
-            <h3 style="margin-top: 15px; font-size: 1.8rem;">Songdio</h3>
-            <p style="opacity: 0.8; font-size: 0.9rem;">Redesigning a dynamic, bold interface for multimodal music creation</p>
-        </div>
+    <div class="project-card" onclick="openModal('songdio')">
+    <div class="project-bg" style="background-image: url('SongdioCover.png');"></div>
+    <div class="project-info">
+        <span class="tag" style="background: var(--primary); border:none; width: fit-content;">AI & MUSIC</span>
+        <h3 style="margin-top: 15px; font-size: 1.8rem;">Songdio</h3>
+        <p style="opacity: 0.8; font-size: 0.9rem;">Redesigning a dynamic, bold interface for multimodal music creation</p>
     </div>
+</div>
 
-    <div class="project-card" onclick="openModal('coomo')" style="background-image: url('CoomoCover.png');">
-        <div class="project-info">
-            <span class="tag" style="background: var(--primary); border:none; width: fit-content;">AI & Voice</span>
-            <h3 style="margin-top: 15px; font-size: 1.8rem;">Coomo</h3>
-            <p style="opacity: 0.8; font-size: 0.9rem;">Companion-style interactive software that emphasizes emotional healing</p>
-        </div>
+<div class="project-card" onclick="openModal('coomo')">
+    <div class="project-bg" style="background-image: url('CoomoCover.png');"></div>
+    <div class="project-info">
+        <span class="tag" style="background: var(--primary); border:none; width: fit-content;">AI & Voice</span>
+        <h3 style="margin-top: 15px; font-size: 1.8rem;">Coomo</h3>
+        <p style="opacity: 0.8; font-size: 0.9rem;">Companion-style interactive software that emphasizes emotional healing</p>
     </div>
 </div>
 </div>
